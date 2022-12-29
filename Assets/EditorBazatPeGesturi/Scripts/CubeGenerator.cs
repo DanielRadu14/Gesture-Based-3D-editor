@@ -28,7 +28,6 @@ public class CubeGenerator : MonoBehaviour
     bool previousSphereState;
     float previousMorphValue;
     Vector3 previousShiftVertex;
-    Vector3 previousTransformPosition;
 
     void Awake()
     {
@@ -282,7 +281,7 @@ public class CubeGenerator : MonoBehaviour
 
     bool ValuesHaveChanged()
     {
-        if (previousTransformPosition != this.gameObject.transform.position || previousShiftVertex != shiftVertex || previousSize != size || previousResolution != resolution || previousOrigin != origin || previousSphereState != isSphere || morphValue != previousMorphValue)
+        if (previousShiftVertex != shiftVertex || previousSize != size || previousResolution != resolution || previousOrigin != origin || previousSphereState != isSphere || morphValue != previousMorphValue)
         {
             return true;
         }
@@ -300,6 +299,5 @@ public class CubeGenerator : MonoBehaviour
         previousSphereState = isSphere;
         previousMorphValue = morphValue;
         previousShiftVertex = shiftVertex;
-        previousTransformPosition = this.gameObject.transform.position;
     }
 }
