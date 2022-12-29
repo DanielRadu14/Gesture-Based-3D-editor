@@ -7,7 +7,10 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
 	[Tooltip("List of the objects that may be dragged and dropped.")]
 	public List<GameObject> draggableObjects;
 
-	[Tooltip("Material used to outline the currently selected object.")]
+    [Tooltip("List of the objects' vertices that may be dragged")]
+    public List<GameObject> draggableVertices;
+
+    [Tooltip("Material used to outline the currently selected object.")]
 	public Material selectedObjectMaterial;
 	
 	[Tooltip("Drag speed of the selected object.")]
@@ -67,9 +70,19 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
 	private Vector3 screenPixelPos = Vector3.zero;
 	private Vector3 newObjectPos = Vector3.zero;
 
+    public int vertexObjectsCount = 0;
 
-	// choose whether to use gravity or not
-	public void SetUseGravity(bool bUseGravity)
+    protected static GrabDropScript instance = null;
+    public static GrabDropScript Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
+    // choose whether to use gravity or not
+    public void SetUseGravity(bool bUseGravity)
 	{
 		this.useGravity = bUseGravity;
 	}
@@ -80,6 +93,18 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
 		resetObjects = true;
 	}
 
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(this);
+            return;
+        }
+    }
 
 	void Start()
 	{

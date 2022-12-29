@@ -228,8 +228,9 @@ public class CreateObjectType : MonoBehaviour, InteractionListenerInterface
             if (gameObj.name.Equals(objectToCreate.name))
             {
                 GameObject gameObject = Instantiate(gameObj, newObjectPos, Quaternion.identity);
-                gameObject.transform.localScale += new Vector3(scaleFactor, scaleFactor, scaleFactor);
-                GameObject.FindObjectOfType<GrabDropScript>().draggableObjects.Add(gameObject);
+                //gameObject.transform.localScale += new Vector3(scaleFactor, scaleFactor, scaleFactor);
+                //gameObj.GetComponent<CubeGenerator>().origin = newObjectPos;
+                GrabDropScript.Instance.draggableObjects.Add(gameObject);
             }
         }
     }
