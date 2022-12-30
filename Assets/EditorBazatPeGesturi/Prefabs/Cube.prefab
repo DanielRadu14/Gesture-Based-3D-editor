@@ -10,12 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6695313979386844383}
   - component: {fileID: 6695313979386844380}
-  - component: {fileID: 6695313979386844381}
   - component: {fileID: 6695313979386844382}
   - component: {fileID: 6695313979386844370}
   - component: {fileID: 6695313979386844369}
   - component: {fileID: 7625433770507218914}
-  - component: {fileID: 8837433730658207000}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -45,19 +43,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6695313979386844376}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &6695313979386844381
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6695313979386844376}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &6695313979386844382
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -141,22 +126,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d96095e614cd7f458e4e2f562469ffb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 1
+  size: 40
   resolution: 1
-  origin: {x: 5.566726, y: 4.8529367, z: 30.79774}
   isSphere: 0
   morphValue: 0
   shiftVertex: {x: 0, y: 0, z: 0}
   vertexObject: {fileID: 1242876260716138326, guid: 45a97a059d035f74ca14d7e3bef5f31b, type: 3}
---- !u!114 &8837433730658207000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6695313979386844376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60d31c9cf28828048b2f01d149292f0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

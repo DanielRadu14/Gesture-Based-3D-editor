@@ -252,6 +252,7 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
 
                         newObjectPos = screenCamera.ScreenToWorldPoint(screenPixelPos) - draggedObjectOffset;
                         draggedObject.transform.position = Vector3.Lerp(draggedObject.transform.position, newObjectPos, dragSpeed * Time.deltaTime);
+                        //draggedObject.GetComponent<Rigidbody>().MovePosition(newObjectPos);
 
                         // check if the object (hand grip) was released
                         bool isReleased = lastHandEvent == InteractionManager.HandEventType.Release;
@@ -260,6 +261,9 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
                         {
                             // restore the object's material and stop dragging the object
                             draggedObject.GetComponent<Renderer>().material = draggedObjectMaterial;
+
+                            Destroy(draggedObject.GetComponent<MeshCollider>());
+                            draggedObject.AddComponent<MeshCollider>().convex = true;
 
                             if (useGravity)
                             {

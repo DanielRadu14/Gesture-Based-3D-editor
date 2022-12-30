@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
+using System.IO;
+using UnityEditor;
 
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
@@ -13,7 +16,6 @@ public class CubeGenerator : MonoBehaviour
 
     [SerializeField] float size;
     [SerializeField] int resolution;
-    [SerializeField] public Vector3 origin;
     [SerializeField] bool isSphere;
     [Range(0, 1)] public float morphValue;
     [SerializeField] Vector3 shiftVertex;
@@ -24,10 +26,12 @@ public class CubeGenerator : MonoBehaviour
     //helper Variables
     float previousSize;
     int previousResolution;
-    Vector3 previousOrigin;
     bool previousSphereState;
     float previousMorphValue;
     Vector3 previousShiftVertex;
+    Vector3 previousOrigin;
+
+    private bool boxColliderAttached;
 
     void Awake()
     {
@@ -35,6 +39,8 @@ public class CubeGenerator : MonoBehaviour
         cubeMesh = new Mesh();
         meshFilter = this.GetComponent<MeshFilter>();
         meshFilter.mesh = new Mesh();
+
+        boxColliderAttached = false;
     }
 
     void Update()
@@ -45,16 +51,27 @@ public class CubeGenerator : MonoBehaviour
         //only generate when changes occur
         if (ValuesHaveChanged())
         {
-            GenerateCube(size, resolution, origin);
+            GenerateCube(size, resolution);
             if (isSphere)
             {
                 cubeMesh.vertices = SpherizeVectors(cubeMesh.vertices);
             }
             AssignMesh(cubeMesh);
 
+            if (!boxColliderAttached)
+            {
+                this.gameObject.AddComponent<MeshCollider>().convex = true;
+                boxColliderAttached = true;
+            }
+
+            if(size != previousSize)
+            {
+                Destroy(this.gameObject.GetComponent<MeshCollider>());
+                this.gameObject.AddComponent<MeshCollider>().convex = true;
+            }
+
             //help keep track of changes
             AssignValuesAsPreviousValues();
-
         }
     }
 
@@ -77,7 +94,7 @@ public class CubeGenerator : MonoBehaviour
             if (alreadyCreatedVerticesObects.Contains(vertex))
                 continue;
 
-            GameObject gameObject = Instantiate(vertexObject, origin + vertex, Quaternion.identity);
+            GameObject gameObject = Instantiate(vertexObject, this.transform.position + vertex, Quaternion.identity);
             gameObject.name = "Vertex" + GrabDropScript.Instance.vertexObjectsCount++;
             gameObject.transform.localScale = new Vector3(size / 20, size / 20, size / 20);
             alreadyCreatedVerticesObects.Add(vertex);
@@ -86,7 +103,7 @@ public class CubeGenerator : MonoBehaviour
         }
     }
 
-    void GenerateCube(float size, int resolution, Vector3 origin)
+    void GenerateCube(float size, int resolution)
     {
         vertices.Clear();
         triangles.Clear();
@@ -95,13 +112,13 @@ public class CubeGenerator : MonoBehaviour
         Mesh planeMesh = GeneratePlane(size, resolution);
 
         //FrontFace 
-        List<Vector3> frontVertices = ShiftVertices(origin, planeMesh.vertices, -Vector3.forward * size / 2);
+        List<Vector3> frontVertices = ShiftVertices(planeMesh.vertices, -Vector3.forward * size / 2);
         List<int> frontTriangles = new List<int>(planeMesh.triangles);
         vertices.AddRange(frontVertices);
         triangles.AddRange(frontTriangles);
 
         //BackFace
-        List<Vector3> backVertices = ShiftVertices(origin, planeMesh.vertices, Vector3.forward * size / 2);
+        List<Vector3> backVertices = ShiftVertices(planeMesh.vertices, Vector3.forward * size / 2);
         List<int> backTriangles = ShiftTriangleIndexes(ReverseTriangles(planeMesh.triangles), vertices.Count);
         vertices.AddRange(backVertices);
         triangles.AddRange(backTriangles);
@@ -112,13 +129,13 @@ public class CubeGenerator : MonoBehaviour
         rotatedPlane.triangles = planeMesh.triangles;
 
         //RightFace
-        List<Vector3> rightVertices = ShiftVertices(origin, rotatedPlane.vertices, Vector3.right * size / 2);
+        List<Vector3> rightVertices = ShiftVertices(rotatedPlane.vertices, Vector3.right * size / 2);
         List<int> rightTriangles = ShiftTriangleIndexes(rotatedPlane.triangles, vertices.Count);
         vertices.AddRange(rightVertices);
         triangles.AddRange(rightTriangles);
 
         //LeftFace
-        List<Vector3> leftVertices = ShiftVertices(origin, rotatedPlane.vertices, Vector3.left * size / 2);
+        List<Vector3> leftVertices = ShiftVertices(rotatedPlane.vertices, Vector3.left * size / 2);
         List<int> leftTriangles = ShiftTriangleIndexes(ReverseTriangles(rotatedPlane.triangles), vertices.Count);
         vertices.AddRange(leftVertices);
         triangles.AddRange(leftTriangles);
@@ -128,19 +145,19 @@ public class CubeGenerator : MonoBehaviour
         rotatedPlane.triangles = planeMesh.triangles;
 
         //TopFace
-        List<Vector3> topVertices = ShiftVertices(origin, rotatedPlane.vertices, Vector3.up * size / 2);
+        List<Vector3> topVertices = ShiftVertices(rotatedPlane.vertices, Vector3.up * size / 2);
         List<int> topTriangles = ShiftTriangleIndexes(rotatedPlane.triangles, vertices.Count);
         vertices.AddRange(topVertices);
         triangles.AddRange(topTriangles);
 
         //BottomFace
-        List<Vector3> bottomVertices = ShiftVertices(origin, rotatedPlane.vertices, Vector3.down * size / 2);
+        List<Vector3> bottomVertices = ShiftVertices(rotatedPlane.vertices, Vector3.down * size / 2);
         List<int> bottomTriangles = ShiftTriangleIndexes(ReverseTriangles(rotatedPlane.triangles), vertices.Count);
         vertices.AddRange(bottomVertices);
         triangles.AddRange(bottomTriangles);
 
         cubeMesh.Clear();
-        vertices = ShiftVertex(origin, vertices.ToArray(), shiftVertex, vertices[0]);
+        vertices = ShiftVertex(vertices.ToArray(), shiftVertex, vertices[0]);
         cubeMesh.vertices = vertices.ToArray();
         cubeMesh.triangles = triangles.ToArray();
 
@@ -198,28 +215,28 @@ public class CubeGenerator : MonoBehaviour
         filterMesh.triangles = mesh.triangles;
     }
 
-    List<Vector3> ShiftVertices(Vector3 origin, Vector3[] vertices, Vector3 shiftValue)
+    List<Vector3> ShiftVertices(Vector3[] vertices, Vector3 shiftValue)
     {
         List<Vector3> shiftedVertices = new List<Vector3>();
         foreach (Vector3 vertex in vertices)
         {
-            shiftedVertices.Add(origin + vertex + shiftValue);
+            shiftedVertices.Add(this.transform.position + vertex + shiftValue);
         }
         return shiftedVertices;
     }
 
-    List<Vector3> ShiftVertex(Vector3 origin, Vector3[] vertices, Vector3 shiftValue, Vector3 vertexToBeModified)
+    List<Vector3> ShiftVertex(Vector3[] vertices, Vector3 shiftValue, Vector3 vertexToBeModified)
     {
         List<Vector3> shiftedVertices = new List<Vector3>();
         foreach (Vector3 vertex in vertices)
         {
             if(vertex == vertexToBeModified)
             {
-                shiftedVertices.Add(origin + vertex + shiftValue);
+                shiftedVertices.Add(this.transform.position + vertex + shiftValue);
             }
             else
             {
-                shiftedVertices.Add(origin + vertex);
+                shiftedVertices.Add(this.transform.position + vertex);
             }
         }
         return shiftedVertices;
@@ -271,17 +288,17 @@ public class CubeGenerator : MonoBehaviour
     {
         for (int i = 0; i < vectors.Length; i++)
         {
-            Vector3 vector = vectors[i] - origin;
+            Vector3 vector = vectors[i] - this.transform.position;
             Vector3 sphereVector = vector.normalized * (size / 2) * 1.67f;
             Vector3 lerpdVector = Vector3.Lerp(vector, sphereVector, morphValue);
-            vectors[i] = origin + lerpdVector;
+            vectors[i] = this.transform.position + lerpdVector;
         }
         return vectors;
     }
 
     bool ValuesHaveChanged()
     {
-        if (previousShiftVertex != shiftVertex || previousSize != size || previousResolution != resolution || previousOrigin != origin || previousSphereState != isSphere || morphValue != previousMorphValue)
+        if (previousShiftVertex != shiftVertex || previousSize != size || previousResolution != resolution || previousOrigin != this.transform.position || previousSphereState != isSphere || morphValue != previousMorphValue)
         {
             return true;
         }
@@ -292,10 +309,10 @@ public class CubeGenerator : MonoBehaviour
     {
         previousSize = size;
         previousResolution = resolution;
-        previousOrigin = origin;
+        previousOrigin = this.transform.position;
         previousSize = size;
         previousResolution = resolution;
-        previousOrigin = origin;
+        previousOrigin = this.transform.position;
         previousSphereState = isSphere;
         previousMorphValue = morphValue;
         previousShiftVertex = shiftVertex;
