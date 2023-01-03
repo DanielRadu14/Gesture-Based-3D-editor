@@ -71,6 +71,9 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
 	private Vector3 newObjectPos = Vector3.zero;
 
     public int vertexObjectsCount = 0;
+    public Dictionary<GameObject, Dictionary<GameObject, Vector3>> objectCorrespondingVertices = 
+        new Dictionary<GameObject, Dictionary<GameObject, Vector3>>();
+    private Vector3 draggedVertex = Vector3.zero;
 
     protected static GrabDropScript instance = null;
     public static GrabDropScript Instance
@@ -157,6 +160,31 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
     }
 
 
+    private Vector3 FindVertexRelativePosition(GameObject vertex)
+    {
+        foreach (Dictionary<GameObject, Vector3> vertexToPositionMap in objectCorrespondingVertices.Values)
+        {
+            if (vertexToPositionMap.ContainsKey(vertex))
+            {
+                return vertexToPositionMap[vertex];
+            }
+        }
+        return Vector3.zero;
+    }
+
+    private CubeGenerator GetCubeGeneratorForDraggedVertex(GameObject vertex)
+    {
+        foreach (KeyValuePair<GameObject, Dictionary<GameObject, Vector3>> kpv in objectCorrespondingVertices)
+        {
+            Dictionary<GameObject, Vector3> vertexGameObjToVertexPos = kpv.Value;
+            if (vertexGameObjToVertexPos.ContainsKey(vertex))
+            {
+                return kpv.Key.GetComponent<CubeGenerator>();
+            }
+        }
+        return null;
+    }
+
     void Update() 
 	{
 		if(interactionManager != null && interactionManager.IsInteractionInited())
@@ -195,6 +223,12 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
                                 {
                                     // an object was hit by the ray. select it and start drgging
                                     draggedObject = obj;
+
+                                    if (draggableVertices.Contains(draggedObject))
+                                    {
+                                        draggedVertex = FindVertexRelativePosition(draggedObject);
+                                    }
+
                                     draggedObjectOffset = hit.point - draggedObject.transform.position;
                                     draggedObjectOffset.z = 0; // don't change z-pos
 
@@ -262,8 +296,19 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
                             // restore the object's material and stop dragging the object
                             draggedObject.GetComponent<Renderer>().material = draggedObjectMaterial;
 
-                            Destroy(draggedObject.GetComponent<MeshCollider>());
-                            draggedObject.AddComponent<MeshCollider>().convex = true;
+                            //Destroy(draggedObject.GetComponent<MeshCollider>());
+                            //draggedObject.AddComponent<MeshCollider>().convex = true;
+
+                            if (draggableVertices.Contains(draggedObject))
+                            {
+                                float x = newObjectPos.x != draggedVertex.x ? newObjectPos.x - draggedVertex.x : newObjectPos.x;
+                                float y = newObjectPos.x != draggedVertex.y ? newObjectPos.y - draggedVertex.y : newObjectPos.y;
+                                float z = newObjectPos.x != draggedVertex.z ? newObjectPos.z - draggedVertex.z : newObjectPos.z;
+                                Vector3 newPos = new Vector3(x,y,z);
+
+                                CubeGenerator cubeGenerator = GetCubeGeneratorForDraggedVertex(draggedObject);
+                                cubeGenerator.AssignShiftValueAndDraggedVertex(draggedVertex, newPos);
+                            }
 
                             if (useGravity)
                             {

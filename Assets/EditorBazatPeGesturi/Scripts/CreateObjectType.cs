@@ -168,6 +168,8 @@ public class CreateObjectType : MonoBehaviour, InteractionListenerInterface
                         {
                             if (hit.collider.gameObject == obj)
                             {
+                                Debug.Log("dragged object " + obj);
+
                                 // an object was hit by the ray. select it and start drgging
                                 draggedObject = obj;
                                 draggedObjectOffset = hit.point - draggedObject.transform.position;
@@ -228,7 +230,7 @@ public class CreateObjectType : MonoBehaviour, InteractionListenerInterface
             if (gameObj.name.Equals(objectToCreate.name))
             {
                 GameObject gameObject = Instantiate(gameObj, newObjectPos, Quaternion.identity);
-                GrabDropScript.Instance.draggableObjects.Add(gameObject);
+                //GrabDropScript.Instance.draggableObjects.Add(gameObject);
             }
         }
     }

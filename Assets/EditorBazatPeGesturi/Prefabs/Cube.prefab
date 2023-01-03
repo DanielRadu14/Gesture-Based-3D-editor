@@ -126,9 +126,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d96095e614cd7f458e4e2f562469ffb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 40
+  cubeMesh: {fileID: 0}
+  size: 20
   resolution: 1
   isSphere: 0
   morphValue: 0
-  shiftVertex: {x: 0, y: 0, z: 0}
+  shiftVertex: {x: -5, y: 0, z: 0}
+  draggedVertex: {x: 0, y: 0, z: 0}
   vertexObject: {fileID: 1242876260716138326, guid: 45a97a059d035f74ca14d7e3bef5f31b, type: 3}

@@ -9,19 +9,18 @@ using UnityEditor;
 public class CubeGenerator : MonoBehaviour
 {
     Mesh planeMesh;
-    Mesh cubeMesh;
+    public Mesh cubeMesh;
     MeshFilter meshFilter;
     List<Vector3> vertices = new List<Vector3>();
     List<int> triangles = new List<int>();
 
-    [SerializeField] float size;
-    [SerializeField] int resolution;
+    [SerializeField] public float size;
+    [SerializeField] public int resolution;
     [SerializeField] bool isSphere;
     [Range(0, 1)] public float morphValue;
     [SerializeField] Vector3 shiftVertex;
+    public Vector3 draggedVertex;
     public GameObject vertexObject;
-
-    private List<GameObject> vertexObjects = new List<GameObject>();
 
     //helper Variables
     float previousSize;
@@ -30,6 +29,7 @@ public class CubeGenerator : MonoBehaviour
     float previousMorphValue;
     Vector3 previousShiftVertex;
     Vector3 previousOrigin;
+    Vector3 previousDraggedVertex;
 
     private bool boxColliderAttached;
 
@@ -49,6 +49,7 @@ public class CubeGenerator : MonoBehaviour
         resolution = Mathf.Clamp(resolution, 1, 30);
 
         //only generate when changes occur
+        
         if (ValuesHaveChanged())
         {
             GenerateCube(size, resolution);
@@ -60,47 +61,89 @@ public class CubeGenerator : MonoBehaviour
 
             if (!boxColliderAttached)
             {
-                this.gameObject.AddComponent<MeshCollider>().convex = true;
-                boxColliderAttached = true;
+                //this.gameObject.AddComponent<MeshCollider>().convex = true;
+                //boxColliderAttached = true;
             }
 
             if(size != previousSize)
             {
-                Destroy(this.gameObject.GetComponent<MeshCollider>());
-                this.gameObject.AddComponent<MeshCollider>().convex = true;
+                //Destroy(this.gameObject.GetComponent<MeshCollider>());
+                //this.gameObject.AddComponent<MeshCollider>().convex = true;
             }
 
             //help keep track of changes
             AssignValuesAsPreviousValues();
         }
+        else if (previousDraggedVertex != draggedVertex || previousShiftVertex != shiftVertex)
+        {
+            ModifyVertices();
+            AssignMesh(cubeMesh);
+
+            previousDraggedVertex = draggedVertex;
+            previousShiftVertex = shiftVertex;
+        }
     }
 
     void DestroyVerticesObjects()
     {
-        foreach(GameObject vertexObject in vertexObjects)
+        if (!GrabDropScript.Instance.objectCorrespondingVertices.ContainsKey(this.gameObject))
+            return;
+
+        foreach(KeyValuePair<GameObject, Vector3> vertexToPositionMap in GrabDropScript.Instance.objectCorrespondingVertices[this.gameObject])
         {
-            Destroy(vertexObject);
-            GrabDropScript.Instance.draggableVertices.Remove(vertexObject);
+            Destroy(vertexToPositionMap.Key);
+            GrabDropScript.Instance.draggableVertices.Remove(vertexToPositionMap.Key);
+            GrabDropScript.Instance.draggableObjects.Remove(vertexToPositionMap.Key);
         }
-        vertexObjects.Clear();
+
+        GrabDropScript.Instance.objectCorrespondingVertices.Clear();
     }
 
     void GenerateVerticesObjects()
     {
         List<Vector3> alreadyCreatedVerticesObects = new List<Vector3>();
+        List<GameObject> createdVerticesObjects = new List<GameObject>();
+        Dictionary<GameObject, Vector3> vertexToPositionAuxMap = new Dictionary<GameObject, Vector3>();
 
-        foreach(Vector3 vertex in cubeMesh.vertices)
+        foreach (Vector3 vertexRelativePos in cubeMesh.vertices)
         {
-            if (alreadyCreatedVerticesObects.Contains(vertex))
+            if (alreadyCreatedVerticesObects.Contains(vertexRelativePos))
                 continue;
 
-            GameObject gameObject = Instantiate(vertexObject, this.transform.position + vertex, Quaternion.identity);
-            gameObject.name = "Vertex" + GrabDropScript.Instance.vertexObjectsCount++;
-            gameObject.transform.localScale = new Vector3(size / 20, size / 20, size / 20);
-            alreadyCreatedVerticesObects.Add(vertex);
-            vertexObjects.Add(gameObject);
-            GrabDropScript.Instance.draggableVertices.Add(gameObject);
+            GameObject vertexGameObject = Instantiate(vertexObject, this.transform.position + vertexRelativePos, Quaternion.identity);
+            vertexGameObject.name = "Vertex" + GrabDropScript.Instance.vertexObjectsCount++;
+            vertexGameObject.transform.localScale = new Vector3(size / 5, size / 5, size / 5);
+            
+            GrabDropScript.Instance.draggableVertices.Add(vertexGameObject);
+            GrabDropScript.Instance.draggableObjects.Add(vertexGameObject);
+
+            vertexToPositionAuxMap.Add(vertexGameObject, vertexRelativePos);
+
+            alreadyCreatedVerticesObects.Add(vertexRelativePos);
+            createdVerticesObjects.Add(vertexGameObject);
         }
+
+        GrabDropScript.Instance.objectCorrespondingVertices.Add(this.gameObject, vertexToPositionAuxMap);
+        //DisplayObjectCorrespondingVertices();
+    }
+
+    //for debug only
+    private void DisplayObjectCorrespondingVertices()
+    {
+        foreach(GameObject cube in GrabDropScript.Instance.objectCorrespondingVertices.Keys)
+        {
+            Debug.Log("For object " + cube);
+            foreach (KeyValuePair<GameObject, Vector3> vertexToPositionMap in GrabDropScript.Instance.objectCorrespondingVertices[this.gameObject])
+            {
+                Debug.Log("Vertex Object " + vertexToPositionMap.Key + " vertex relative position + " + vertexToPositionMap.Value);
+            }
+        }
+    }
+
+    public void AssignShiftValueAndDraggedVertex(Vector3 draggedVertex, Vector3 shiftVertex)
+    {
+        this.draggedVertex = draggedVertex;
+        this.shiftVertex = shiftVertex;
     }
 
     void GenerateCube(float size, int resolution)
@@ -157,10 +200,8 @@ public class CubeGenerator : MonoBehaviour
         triangles.AddRange(bottomTriangles);
 
         cubeMesh.Clear();
-        vertices = ShiftVertex(vertices.ToArray(), shiftVertex, vertices[0]);
         cubeMesh.vertices = vertices.ToArray();
         cubeMesh.triangles = triangles.ToArray();
-
         GenerateVerticesObjects();
     }
 
@@ -215,6 +256,16 @@ public class CubeGenerator : MonoBehaviour
         filterMesh.triangles = mesh.triangles;
     }
 
+    void ModifyVertices()
+    {
+        vertices = ShiftVertex(vertices.ToArray(), shiftVertex, draggedVertex);
+        cubeMesh.vertices = vertices.ToArray();
+        cubeMesh.triangles = triangles.ToArray();
+
+        DestroyVerticesObjects();
+        GenerateVerticesObjects();
+    }
+
     List<Vector3> ShiftVertices(Vector3[] vertices, Vector3 shiftValue)
     {
         List<Vector3> shiftedVertices = new List<Vector3>();
@@ -232,11 +283,12 @@ public class CubeGenerator : MonoBehaviour
         {
             if(vertex == vertexToBeModified)
             {
-                shiftedVertices.Add(this.transform.position + vertex + shiftValue);
+                Vector3 newPos = new Vector3(vertex.x + shiftValue.x, vertex.y + shiftValue.y, vertex.z);
+                shiftedVertices.Add(newPos);
             }
             else
             {
-                shiftedVertices.Add(this.transform.position + vertex);
+                shiftedVertices.Add(vertex);
             }
         }
         return shiftedVertices;
@@ -298,7 +350,7 @@ public class CubeGenerator : MonoBehaviour
 
     bool ValuesHaveChanged()
     {
-        if (previousShiftVertex != shiftVertex || previousSize != size || previousResolution != resolution || previousOrigin != this.transform.position || previousSphereState != isSphere || morphValue != previousMorphValue)
+        if (previousSize != size || previousResolution != resolution || previousOrigin != this.transform.position || previousSphereState != isSphere || morphValue != previousMorphValue)
         {
             return true;
         }
@@ -316,5 +368,6 @@ public class CubeGenerator : MonoBehaviour
         previousSphereState = isSphere;
         previousMorphValue = morphValue;
         previousShiftVertex = shiftVertex;
+        previousDraggedVertex = draggedVertex;
     }
 }
