@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class OverlayController : MonoBehaviour 
+public class OverlayController : UnityEngine.MonoBehaviour 
 {
 //	[Tooltip("GUI-texture used to display the color camera feed on the scene background.")]
 //	public GUITexture backgroundImage;

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class EggMover : MonoBehaviour 
+public class EggMover : UnityEngine.MonoBehaviour 
 {
     void Awake()
     {

@@ -47,7 +47,7 @@ public struct BodySliceData
 /// <summary>
 /// Body slicer is component that estimates the user height, as well as several other body measures, from the depth image data.
 /// </summary>
-public class BodySlicer : MonoBehaviour
+public class BodySlicer : UnityEngine.MonoBehaviour
 {
 	[Tooltip("Index of the player, tracked by this component. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
 	public int playerIndex = 0;

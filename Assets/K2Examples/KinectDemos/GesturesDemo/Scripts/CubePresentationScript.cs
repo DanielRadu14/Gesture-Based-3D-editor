@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class CubePresentationScript : MonoBehaviour 
+public class CubePresentationScript : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Camera used for screen-to-world calculations. This is usually the main camera.")]
 	public Camera screenCamera;

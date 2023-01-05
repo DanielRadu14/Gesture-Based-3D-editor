@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class OffsetNodeMover : MonoBehaviour 
+public class OffsetNodeMover : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Speed at which the offset node will move through the scene.")]
 	public float moveSpeed = 1f;

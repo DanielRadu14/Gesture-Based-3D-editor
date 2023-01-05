@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SimpleVisualGestureListener : MonoBehaviour, VisualGestureListenerInterface
+public class SimpleVisualGestureListener : UnityEngine.MonoBehaviour, VisualGestureListenerInterface
 {
 	[Tooltip("Index of the player, tracked by this component. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
 	public int playerIndex = 0;

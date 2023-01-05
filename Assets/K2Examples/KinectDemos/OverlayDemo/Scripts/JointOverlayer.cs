@@ -4,7 +4,7 @@ using System;
 //using Windows.Kinect;
 
 
-public class JointOverlayer : MonoBehaviour 
+public class JointOverlayer : UnityEngine.MonoBehaviour 
 {
 //	[Tooltip("GUI-texture used to display the color camera feed on the scene background.")]
 //	public GUITexture backgroundImage;

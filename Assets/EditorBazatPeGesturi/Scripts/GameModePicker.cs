@@ -2,20 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameModePicker : MonoBehaviour
+public class GameModePicker : UnityEngine.MonoBehaviour
 {
-    public enum GameMode { Default, Vertex };
+    public enum GameMode { Default, Vertex, TBD };
     public GameMode gameModeStat = GameMode.Default;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

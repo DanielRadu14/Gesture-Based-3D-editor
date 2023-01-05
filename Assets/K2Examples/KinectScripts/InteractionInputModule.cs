@@ -133,14 +133,14 @@ public class InteractionInputModule : PointerInputModule, InteractionListenerInt
 
 	private InteractionManager GetInteractionManager()
 	{
-		// find the proper interaction manager
-		MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+        // find the proper interaction manager
+        UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 
-		foreach(MonoBehaviour monoScript in monoScripts)
+		foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 		{
 			if((monoScript is InteractionManager) && monoScript.enabled)
 			{
-				InteractionManager manager = (InteractionManager)monoScript;
+                InteractionManager manager = (InteractionManager)monoScript;
 
 				if (manager.playerIndex == playerIndex && manager.leftHandInteraction == leftHandInteraction && manager.rightHandInteraction == rightHandInteraction) 
 				{

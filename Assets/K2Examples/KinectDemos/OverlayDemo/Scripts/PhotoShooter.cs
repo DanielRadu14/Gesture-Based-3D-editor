@@ -4,7 +4,7 @@ using System.IO;
 using System;
 
 
-public class PhotoShooter : MonoBehaviour
+public class PhotoShooter : UnityEngine.MonoBehaviour
 {
 	[Tooltip("Camera used to render the background.")]
 	public Camera backroundCamera;

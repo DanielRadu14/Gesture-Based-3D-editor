@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UserPlaneMover : MonoBehaviour 
+public class UserPlaneMover : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Index of the player, tracked by this component. 0 - the 1st player, 1 - the 2nd player, etc.")]
 	public int playerIndex = 0;

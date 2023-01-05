@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GameControlScript : MonoBehaviour 
+public class GameControlScript : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Prefab used to create the scene fence.")]
 	public GameObject cratePrefab;

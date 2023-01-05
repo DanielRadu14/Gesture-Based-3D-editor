@@ -33,7 +33,7 @@ public interface GestureManagerInterface
 /// <summary>
 /// KinectGestures is utility class that processes programmatic Kinect gestures
 /// </summary>
-public class KinectGestures : MonoBehaviour, GestureManagerInterface
+public class KinectGestures : UnityEngine.MonoBehaviour, GestureManagerInterface
 {
 
 	/// <summary>

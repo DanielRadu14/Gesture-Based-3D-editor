@@ -6,7 +6,7 @@ using System.Globalization;
 /// <summary>
 /// Kinect recorder and player is the component that manages recording and replaying of Kinect body-data files.
 /// </summary>
-public class KinectRecorderPlayer : MonoBehaviour 
+public class KinectRecorderPlayer : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Path to the file used to record or replay the recorded data.")]
 	public string filePath = "BodyRecording.txt";

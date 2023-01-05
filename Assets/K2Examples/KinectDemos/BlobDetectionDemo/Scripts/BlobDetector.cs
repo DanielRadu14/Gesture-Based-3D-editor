@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class BlobDetector : MonoBehaviour
+public class BlobDetector : UnityEngine.MonoBehaviour
 {
     [Tooltip("Camera used to estimate the overlay positions of 3D-objects over the background. By default it is the main camera.")]
     public Camera foregroundCamera;

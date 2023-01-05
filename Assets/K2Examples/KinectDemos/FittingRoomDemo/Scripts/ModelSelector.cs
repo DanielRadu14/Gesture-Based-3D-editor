@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 
 
-public class ModelSelector : MonoBehaviour 
+public class ModelSelector : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Index of the player, tracked by this component. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
 	public int playerIndex = 0;
@@ -521,15 +521,15 @@ public class ModelSelector : MonoBehaviour
 				ac.SuccessfulCalibration(userId, false);
 			}
 
-			// locate the available avatar controllers
-			MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+            // locate the available avatar controllers
+            UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 			km.avatarControllers.Clear();
 
-			foreach(MonoBehaviour monoScript in monoScripts)
+			foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 			{
 				if((monoScript is AvatarController) && monoScript.enabled)
 				{
-					AvatarController avatar = (AvatarController)monoScript;
+                    AvatarController avatar = (AvatarController)monoScript;
 					km.avatarControllers.Add(avatar);
 				}
 			}

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class LocateAvatarsAndGestureListeners : MonoBehaviour 
+public class LocateAvatarsAndGestureListeners : UnityEngine.MonoBehaviour 
 {
 
 	void Start () 
@@ -14,24 +14,24 @@ public class LocateAvatarsAndGestureListeners : MonoBehaviour
 			kinectManager.avatarControllers.Clear();
 			kinectManager.ClearKinectUsers();
 
-			// get the mono scripts. avatar controllers and gesture listeners are among them
-			MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+            // get the mono scripts. avatar controllers and gesture listeners are among them
+            UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 			
 			// locate the available avatar controllers
-			foreach(MonoBehaviour monoScript in monoScripts)
+			foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 			{
 //				if(typeof(AvatarController).IsAssignableFrom(monoScript.GetType()) &&
 //				   monoScript.enabled)
 				if((monoScript is AvatarController) && monoScript.enabled)
 				{
-					AvatarController avatar = (AvatarController)monoScript;
+                    AvatarController avatar = (AvatarController)monoScript;
 					kinectManager.avatarControllers.Add(avatar);
 				}
 			}
 
 			// locate Kinect gesture manager, if any
 			kinectManager.gestureManager = null;
-			foreach(MonoBehaviour monoScript in monoScripts)
+			foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 			{
 //				if(typeof(KinectGestures).IsAssignableFrom(monoScript.GetType()) && 
 //				   monoScript.enabled)
@@ -45,7 +45,7 @@ public class LocateAvatarsAndGestureListeners : MonoBehaviour
 			// locate the available gesture listeners
 			kinectManager.gestureListeners.Clear();
 
-			foreach(MonoBehaviour monoScript in monoScripts)
+			foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 			{
 //				if(typeof(KinectGestures.GestureListenerInterface).IsAssignableFrom(monoScript.GetType()) &&
 //				   monoScript.enabled)

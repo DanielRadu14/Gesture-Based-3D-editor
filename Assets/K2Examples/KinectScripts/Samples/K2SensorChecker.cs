@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class K2SensorChecker : MonoBehaviour 
+public class K2SensorChecker : UnityEngine.MonoBehaviour 
 {
 
 	[Tooltip("UI-Text to display information messages.")]

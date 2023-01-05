@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UserHeadCamera : MonoBehaviour 
+public class UserHeadCamera : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Index of the player, tracked by this component. -1 means all players, 0 - the 1st player only, 1 - the 2nd player only, etc.")]
 	public int playerIndex = 0;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class CollisionLogger : MonoBehaviour
+public class CollisionLogger : UnityEngine.MonoBehaviour
 {
 
     private void OnTriggerEnter(Collider other)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UserAvatarMatcher : MonoBehaviour 
+public class UserAvatarMatcher : UnityEngine.MonoBehaviour 
 {
 
 	[Tooltip("Humanoid model used for avatar instatiation.")]

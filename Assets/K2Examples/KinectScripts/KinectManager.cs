@@ -13,7 +13,7 @@ using System.Collections.Generic;
 /// <summary>
 /// KinectManager is the main and the most basic Kinect-related component. It is used to control the sensor and poll the data streams.
 /// </summary>
-public class KinectManager : MonoBehaviour 
+public class KinectManager : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("How high above the ground is the sensor, in meters.")]
 	public float sensorHeight = 1.0f;
@@ -145,7 +145,7 @@ public class KinectManager : MonoBehaviour
 	public KinectGestures gestureManager;
 	
 	[Tooltip("List of the gesture listeners in the scene. If the list is empty, the available gesture listeners will be detected at the scene start up.")]
-	public List<MonoBehaviour> gestureListeners = new List<MonoBehaviour>();
+	public List<UnityEngine.MonoBehaviour> gestureListeners = new List<UnityEngine.MonoBehaviour>();
 
 	[Tooltip("UI-Text to display user detection messages.")]
 	public UnityEngine.UI.Text calibrationText;
@@ -2569,15 +2569,15 @@ public class KinectManager : MonoBehaviour
 		// try to automatically use the available avatar controllers in the scene
 		if(avatarControllers.Count == 0)
 		{
-			MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+            UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 
-			foreach(MonoBehaviour monoScript in monoScripts)
+			foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 			{
 //				if(typeof(AvatarController).IsAssignableFrom(monoScript.GetType()) && monoScript.enabled)
 				if((monoScript is AvatarController) && monoScript.enabled)
 				{
-					AvatarController avatar = (AvatarController)monoScript;
-					avatarControllers.Add(avatar);
+                    AvatarController avatar = (AvatarController)monoScript;
+                    avatarControllers.Add(avatar);
 				}
 			}
 		}
@@ -2585,14 +2585,14 @@ public class KinectManager : MonoBehaviour
 		// set up the gesture manager, if not already set
 		if(gestureManager == null)
 		{
-			MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+            UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 			
-			foreach(MonoBehaviour monoScript in monoScripts)
+			foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 			{
 //				if(typeof(KinectGestures).IsAssignableFrom(monoScript.GetType()) && monoScript.enabled)
 				if((monoScript is KinectGestures) && monoScript.enabled)
 				{
-					gestureManager = (KinectGestures)monoScript;
+                    gestureManager = (KinectGestures)monoScript;
 					break;
 				}
 			}
@@ -2602,16 +2602,16 @@ public class KinectManager : MonoBehaviour
 		// try to automatically use the available gesture listeners in the scene
 		if(gestureListeners.Count == 0)
 		{
-			MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+            UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 			
-			foreach(MonoBehaviour monoScript in monoScripts)
+			foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 			{
 //				if(typeof(KinectGestures.GestureListenerInterface).IsAssignableFrom(monoScript.GetType()) &&
 //				   monoScript.enabled)
 				if((monoScript is KinectGestures.GestureListenerInterface) && monoScript.enabled)
 				{
-					//KinectGestures.GestureListenerInterface gl = (KinectGestures.GestureListenerInterface)monoScript;
-					gestureListeners.Add(monoScript);
+                    //KinectGestures.GestureListenerInterface gl = (KinectGestures.GestureListenerInterface)monoScript;
+                    gestureListeners.Add(monoScript);
 				}
 			}
 		}
@@ -5082,38 +5082,38 @@ public class KinectManager : MonoBehaviour
 		// locate the available gesture listeners
 		gestureListeners.Clear();
 
-		MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+        UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 
-		foreach(MonoBehaviour monoScript in monoScripts)
+		foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 		{
 //			if(typeof(KinectGestures.GestureListenerInterface).IsAssignableFrom(monoScript.GetType()) &&
 //				monoScript.enabled)
 			if((monoScript is KinectGestures.GestureListenerInterface) && monoScript.enabled)
 			{
-				//KinectGestures.GestureListenerInterface gl = (KinectGestures.GestureListenerInterface)monoScript;
-				gestureListeners.Add(monoScript);
+                //KinectGestures.GestureListenerInterface gl = (KinectGestures.GestureListenerInterface)monoScript;
+                gestureListeners.Add(monoScript);
 			}
 		}
 
 		// locate Kinect gesture manager, if any
 		gestureManager = null;
-		foreach(MonoBehaviour monoScript in monoScripts)
+		foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 		{
 //			if(typeof(KinectGestures).IsAssignableFrom(monoScript.GetType()) && 
 //				monoScript.enabled)
 			if((monoScript is KinectGestures) && monoScript.enabled)
 			{
-//#if !UNITY_2019
-//                // if skipRemoteAvatars - add only the local gesture managers
-//                if ( skipRemoteAvatars && monoScript is NetworkBehaviour )
-//                {
-//                    if( false == ( monoScript as NetworkBehaviour ).isLocalPlayer )
-//                    {
-//						Debug.Log( "KM: KinectGestures not registered because is not a local object!" );
-//                        continue;   // skip network objects from other clients -> they are controlled by the KM on other machine
-//                    }
-//                }
-//#endif
+                //#if !UNITY_2019
+                //                // if skipRemoteAvatars - add only the local gesture managers
+                //                if ( skipRemoteAvatars && monoScript is NetworkBehaviour )
+                //                {
+                //                    if( false == ( monoScript as NetworkBehaviour ).isLocalPlayer )
+                //                    {
+                //						Debug.Log( "KM: KinectGestures not registered because is not a local object!" );
+                //                        continue;   // skip network objects from other clients -> they are controlled by the KM on other machine
+                //                    }
+                //                }
+                //#endif
                 gestureManager = (KinectGestures)monoScript;
 				break;
 			}
@@ -5134,31 +5134,31 @@ public class KinectManager : MonoBehaviour
 	{
 		// remove all users, filters and avatar controllers
 		avatarControllers.Clear();
-		//ClearKinectUsers();
+        //ClearKinectUsers();
 
-		// get the mono scripts. avatar controllers and gesture listeners are among them
-		MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+        // get the mono scripts. avatar controllers and gesture listeners are among them
+        UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 
 		// locate the available avatar controllers
-		foreach(MonoBehaviour monoScript in monoScripts)
+		foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 		{
 //			if(typeof(AvatarController).IsAssignableFrom(monoScript.GetType()) &&
 //				monoScript.enabled)
 			if((monoScript is AvatarController) && monoScript.enabled)
 			{
-//#if !UNITY_2019
-//                // if skipRemoteAvatars - add only the local avatar controllers
-//                if ( skipRemoteAvatars && monoScript is NetworkBehaviour )
-//                {
-//                    if( false == ( monoScript as NetworkBehaviour ).isLocalPlayer )
-//                    {
-//                        Debug.Log( "KM: AvatarController not registered because is not a local object!" );
-//                        continue;   // skip network objects from other clients -> there are controlled by kinect in other computer 
-//                    }
-//                }
-//#endif
+                //#if !UNITY_2019
+                //                // if skipRemoteAvatars - add only the local avatar controllers
+                //                if ( skipRemoteAvatars && monoScript is NetworkBehaviour )
+                //                {
+                //                    if( false == ( monoScript as NetworkBehaviour ).isLocalPlayer )
+                //                    {
+                //                        Debug.Log( "KM: AvatarController not registered because is not a local object!" );
+                //                        continue;   // skip network objects from other clients -> there are controlled by kinect in other computer 
+                //                    }
+                //                }
+                //#endif
                 AvatarController avatar = (AvatarController)monoScript;
-				avatarControllers.Add(avatar);
+                avatarControllers.Add(avatar);
 			}
 		}
 	}

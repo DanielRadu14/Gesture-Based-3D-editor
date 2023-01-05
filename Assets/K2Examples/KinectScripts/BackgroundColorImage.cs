@@ -4,7 +4,7 @@ using System.Collections;
 /// <summary>
 /// Background color image is component that displays the color camera feed on GUI texture, usually the scene background.
 /// </summary>
-public class BackgroundColorImage : MonoBehaviour 
+public class BackgroundColorImage : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("RawImage used to display the color camera feed.")]
 	public UnityEngine.UI.RawImage backgroundImage;

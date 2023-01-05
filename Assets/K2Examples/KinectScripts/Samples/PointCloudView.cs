@@ -2,7 +2,7 @@
 using System.Collections;
 
 
-public class PointCloudView : MonoBehaviour
+public class PointCloudView : UnityEngine.MonoBehaviour
 {
 	[Tooltip("Target mesh width in meters.")]
 	public float meshWidth = 5.12f;

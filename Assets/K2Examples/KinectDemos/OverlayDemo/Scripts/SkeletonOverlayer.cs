@@ -3,7 +3,7 @@ using System.Collections;
 //using Windows.Kinect;
 
 
-public class SkeletonOverlayer : MonoBehaviour 
+public class SkeletonOverlayer : UnityEngine.MonoBehaviour 
 {
 //	[Tooltip("GUI-texture used to display the color camera feed on the scene background.")]
 //	public GUITexture backgroundImage;

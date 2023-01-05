@@ -13,7 +13,7 @@ using System.Text;
 /// Avatar controller is the component that transfers the captured user motion to a humanoid model (avatar).
 /// </summary>
 [RequireComponent(typeof(Animator))]
-public class AvatarController : MonoBehaviour
+public class AvatarController : UnityEngine.MonoBehaviour
 {	
 	[Tooltip("Index of the player, tracked by this component. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
 	public int playerIndex = 0;

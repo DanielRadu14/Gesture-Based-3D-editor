@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ForegroundBlender : MonoBehaviour 
+public class ForegroundBlender : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Background texture that will be rendered 'behind' the detected users.")]
 	public Texture backgroundTexture;

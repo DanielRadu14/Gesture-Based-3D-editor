@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
+public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInterface
 {
 	[Tooltip("List of the objects that may be dragged and dropped.")]
 	public List<GameObject> draggableObjects;
@@ -140,9 +140,9 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
     private InteractionManager GetInteractionManager()
     {
         // find the proper interaction manager
-        MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+        UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 
-        foreach (MonoBehaviour monoScript in monoScripts)
+        foreach (UnityEngine.MonoBehaviour monoScript in monoScripts)
         {
             if ((monoScript is InteractionManager) && monoScript.enabled)
             {
@@ -240,29 +240,37 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
                                     draggedObject.GetComponent<Renderer>().material = selectedObjectMaterial;
 
                                     // stop using gravity while dragging object
-                                    draggedObject.GetComponent<Rigidbody>().useGravity = false;
+                                    if(draggedObject.GetComponent<Rigidbody>() != null)
+                                        draggedObject.GetComponent<Rigidbody>().useGravity = false;
                                 }
 								else if(interactionManager.IsLeftHandPrimary())
                                 {
-                                    // a material has been grabbed -> apply it to the selected object
-                                    Material material = GameObject.FindObjectOfType<SelectableTextures>().draggedObjectMaterial;
-                                    if (material)
-                                    {
-                                        obj.GetComponent<Renderer>().material = material;
-                                        StartCoroutine(ResetDraggedObjectMaterial());
-                                    }
-                                    else
-                                    {
-                                        draggedObject = obj;
-
-                                        draggedObjectMaterial = draggedObject.GetComponent<Renderer>().material;
-                                        draggedObject.GetComponent<Renderer>().material = selectedObjectMaterial;
-                                    }
+                                    draggedObject = obj;
+                                    draggedObjectMaterial = draggedObject.GetComponent<Renderer>().material;
+                                    draggedObject.GetComponent<Renderer>().material = selectedObjectMaterial;
                                 }
 								break;
-							}
+                            }
 						}
-					}
+
+                        foreach (GameObject obj in SelectableObjects.Instance.selectableTextureTypes)
+                        {
+                            if (hit.collider.gameObject == obj)
+                            {
+                                if (interactionManager.IsLeftHandPrimary())
+                                {
+                                    draggedObject = obj;
+
+                                    //select texture
+                                    if (SelectTextureType.Instance.GetMaterial() == null)
+                                    {
+                                        SelectTextureType.Instance.SetMaterial(draggedObject.GetComponent<Renderer>().material);
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
 				}
 				
 			}
@@ -285,37 +293,47 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
                             (screenCamera ? screenCamera.transform.position.z : 0f);
 
                         newObjectPos = screenCamera.ScreenToWorldPoint(screenPixelPos) - draggedObjectOffset;
-                        draggedObject.transform.position = Vector3.Lerp(draggedObject.transform.position, newObjectPos, dragSpeed * Time.deltaTime);
-                        //draggedObject.GetComponent<Rigidbody>().MovePosition(newObjectPos);
+
+                        if (!SelectableObjects.Instance.selectableObjectTypes.Contains(draggedObject))
+                        {
+                            draggedObject.transform.position = Vector3.Lerp(draggedObject.transform.position, newObjectPos, dragSpeed * Time.deltaTime);
+                        }
 
                         // check if the object (hand grip) was released
                         bool isReleased = lastHandEvent == InteractionManager.HandEventType.Release;
 
                         if (isReleased)
                         {
-                            // restore the object's material and stop dragging the object
+                            //create object
+                            if (SelectableObjects.Instance.selectableObjectTypes.Contains(draggedObject))
+                            {
+                                CreateObjectType.Instance.CreateObject(draggedObject, newObjectPos);
+                            }
+                            //drop dragged object
+                            else
+                            {
+                                Destroy(draggedObject.GetComponent<MeshCollider>());
+                                draggedObject.AddComponent<MeshCollider>().convex = true;
+
+                                if (draggableVertices.Contains(draggedObject))
+                                {
+                                    float x = newObjectPos.x != draggedVertex.x ? newObjectPos.x - draggedVertex.x : newObjectPos.x;
+                                    float y = newObjectPos.x != draggedVertex.y ? newObjectPos.y - draggedVertex.y : newObjectPos.y;
+                                    float z = newObjectPos.x != draggedVertex.z ? newObjectPos.z - draggedVertex.z : newObjectPos.z;
+                                    Vector3 newPos = new Vector3(x, y, z);
+
+                                    CubeGenerator cubeGenerator = GetCubeGeneratorForDraggedVertex(draggedObject);
+                                    cubeGenerator.AssignShiftValueAndDraggedVertex(draggedVertex, newPos);
+                                }
+
+                                if (useGravity)
+                                {
+                                    // add gravity to the object
+                                    draggedObject.GetComponent<Rigidbody>().useGravity = true;
+                                }
+                            }
+
                             draggedObject.GetComponent<Renderer>().material = draggedObjectMaterial;
-
-                            //Destroy(draggedObject.GetComponent<MeshCollider>());
-                            //draggedObject.AddComponent<MeshCollider>().convex = true;
-
-                            if (draggableVertices.Contains(draggedObject))
-                            {
-                                float x = newObjectPos.x != draggedVertex.x ? newObjectPos.x - draggedVertex.x : newObjectPos.x;
-                                float y = newObjectPos.x != draggedVertex.y ? newObjectPos.y - draggedVertex.y : newObjectPos.y;
-                                float z = newObjectPos.x != draggedVertex.z ? newObjectPos.z - draggedVertex.z : newObjectPos.z;
-                                Vector3 newPos = new Vector3(x,y,z);
-
-                                CubeGenerator cubeGenerator = GetCubeGeneratorForDraggedVertex(draggedObject);
-                                cubeGenerator.AssignShiftValueAndDraggedVertex(draggedVertex, newPos);
-                            }
-
-                            if (useGravity)
-                            {
-                                // add gravity to the object
-                                draggedObject.GetComponent<Rigidbody>().useGravity = true;
-                            }
-
                             draggedObject = null;
                             draggedObjectMaterial = null;
                         }
@@ -331,15 +349,47 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
                         Vector3 vObjectRotation = new Vector3(-angleArounfX, -angleArounfY, 180f);
                         Quaternion qObjectRotation = screenCamera ? screenCamera.transform.rotation * Quaternion.Euler(vObjectRotation) : Quaternion.Euler(vObjectRotation);
 
-                        draggedObject.transform.rotation = Quaternion.Slerp(draggedObject.transform.rotation, qObjectRotation, smoothFactor * Time.deltaTime);
+                        Material material = SelectTextureType.Instance.GetMaterial();
+                        //rotate object only if a material was not selected
+                        if (material == null)
+                            draggedObject.transform.rotation = Quaternion.Slerp(draggedObject.transform.rotation, qObjectRotation, smoothFactor * Time.deltaTime);
 
                         // check if the object (hand grip) was released
                         bool isReleased = lastHandEvent == InteractionManager.HandEventType.Release;
 
                         if (isReleased)
                         {
-                            // restore the object's material and stop dragging the object
-                            draggedObject.GetComponent<Renderer>().material = draggedObjectMaterial;
+                            //apply selected texture
+                            if (SelectTextureType.Instance.GetMaterial() != null)
+                            {
+                                // convert the normalized screen pos to pixel pos
+                                screenNormalPos = interactionManager.IsLeftHandPrimary() ? interactionManager.GetLeftHandScreenPos() : interactionManager.GetRightHandScreenPos();
+
+                                screenPixelPos.x = (int)(screenNormalPos.x * (screenCamera ? screenCamera.pixelWidth : Screen.width));
+                                screenPixelPos.y = (int)(screenNormalPos.y * (screenCamera ? screenCamera.pixelHeight : Screen.height));
+                                Ray ray = screenCamera ? screenCamera.ScreenPointToRay(screenPixelPos) : new Ray();
+
+                                // check if there is an underlying objects
+                                if (Physics.Raycast(ray, out RaycastHit hit))
+                                {
+                                    foreach (GameObject obj in draggableObjects)
+                                    {
+                                        if (hit.collider.gameObject == obj)
+                                        {
+                                            //apply texture
+                                            obj.GetComponent<Renderer>().material = material;
+                                            StartCoroutine(ResetDraggedObjectMaterial());
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            // restore the object's material and stop rotating the object
+                            else
+                            {
+                                draggedObject.GetComponent<Renderer>().material = draggedObjectMaterial;
+                            }
+                            
                             draggedObject = null;
                             draggedObjectMaterial = null;
                         }
@@ -353,7 +403,7 @@ public class GrabDropScript : MonoBehaviour, InteractionListenerInterface
     private IEnumerator ResetDraggedObjectMaterial()
     {
         yield return new WaitForSeconds(0.5f);
-        GameObject.FindObjectOfType<SelectableTextures>().draggedObjectMaterial = null;
+        SelectTextureType.Instance.SetMaterial(null);
     }
 
 

@@ -23,7 +23,7 @@ public interface SpeechRecognitionInterface
 /// <summary>
 /// Speech manager is the component that manages the Kinect speech recognition.
 /// </summary>
-public class SpeechManager : MonoBehaviour 
+public class SpeechManager : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("File name of the grammar file, used by the speech recognizer. The file will be copied from Resources, if it does not exist.")]
 	public string grammarFileName = "SpeechGrammar.grxml";
@@ -38,7 +38,7 @@ public class SpeechManager : MonoBehaviour
 	public float requiredConfidence = 0f;
 
 	[Tooltip("List of the speech recognition listeners in the scene. If the list is empty, the available gesture listeners will be detected at the scene start up.")]
-	public List<MonoBehaviour> speechRecognitionListeners;
+	public List<UnityEngine.MonoBehaviour> speechRecognitionListeners;
 
 	[Tooltip("UI-Text to display the speech-manager debug messages.")]
 	public UnityEngine.UI.Text debugText;
@@ -352,13 +352,13 @@ public class SpeechManager : MonoBehaviour
 			// try to automatically detect the available speech recognition listeners in the scene
 			if(speechRecognitionListeners.Count == 0)
 			{
-				MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+                UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 
-				foreach(MonoBehaviour monoScript in monoScripts)
+				foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 				{
 					if((monoScript is SpeechRecognitionInterface) && monoScript.enabled)
 					{
-						speechRecognitionListeners.Add(monoScript);
+                        speechRecognitionListeners.Add(monoScript);
 					}
 				}
 			}

@@ -8,7 +8,7 @@ using System.IO;
 /// <summary>
 /// Background removal manager is the component that manages Kinect background removal, i.e. cutting out user body silhouettes.
 /// </summary>
-public class BackgroundRemovalManager : MonoBehaviour 
+public class BackgroundRemovalManager : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Index of the player, tracked by this component. -1 means all players, 0 - the 1st player only, 1 - the 2nd player only, etc.")]
 	public int playerIndex = -1;

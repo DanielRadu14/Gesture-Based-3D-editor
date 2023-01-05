@@ -10,7 +10,7 @@ using Windows.Kinect;
 using KinectAudioSource = Windows.Kinect.AudioSource;
 
 
-public class KinectAudioTracker : MonoBehaviour
+public class KinectAudioTracker : UnityEngine.MonoBehaviour
 {
 	[Tooltip("UI-Text to display status messages.")]
 	public UnityEngine.UI.Text statusText;

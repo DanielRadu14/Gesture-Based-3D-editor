@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CameraRollFixer : MonoBehaviour 
+public class CameraRollFixer : UnityEngine.MonoBehaviour 
 {
 	void LateUpdate () 
 	{

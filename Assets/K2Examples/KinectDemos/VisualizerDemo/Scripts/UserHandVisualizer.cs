@@ -2,7 +2,7 @@
 using System.Collections;
 
 
-public class UserHandVisualizer : MonoBehaviour
+public class UserHandVisualizer : UnityEngine.MonoBehaviour
 {
 	[Tooltip("Index of the player, tracked by this component. 0 - the 1st player, 1 - the 2nd player, 2 - the 3rd player, etc.")]
 	public int playerIndex = 0;

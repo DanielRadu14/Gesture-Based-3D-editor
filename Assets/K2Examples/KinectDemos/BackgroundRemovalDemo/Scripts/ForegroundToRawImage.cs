@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 
-public class ForegroundToRawImage : MonoBehaviour 
+public class ForegroundToRawImage : UnityEngine.MonoBehaviour 
 {
 	private RawImage rawImage;
 

@@ -2,7 +2,7 @@
 using System.Collections;
 using RoomAliveToolkit;
 
-public class ProjectorCamera : MonoBehaviour 
+public class ProjectorCamera : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("XML file in Resources, containing calibration data.")]
 	public TextAsset calibrationXml = null;

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ForegroundToRenderer : MonoBehaviour 
+public class ForegroundToRenderer : UnityEngine.MonoBehaviour 
 {
 	private Renderer thisRenderer;
 

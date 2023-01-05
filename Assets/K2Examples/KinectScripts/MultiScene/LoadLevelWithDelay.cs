@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class LoadLevelWithDelay : MonoBehaviour 
+public class LoadLevelWithDelay : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Seconds to wait before loading next level.")]
 	public float waitSeconds = 0f;

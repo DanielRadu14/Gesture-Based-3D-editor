@@ -2,7 +2,7 @@
 using System.Collections;
 
 
-public class UserMeshVisualizer : MonoBehaviour
+public class UserMeshVisualizer : UnityEngine.MonoBehaviour
 {
 	[Tooltip("Index of the player, tracked by this component. -1 means all players, 0 - the 1st player only, 1 - the 2nd player only, etc.")]
 	public int playerIndex = -1;

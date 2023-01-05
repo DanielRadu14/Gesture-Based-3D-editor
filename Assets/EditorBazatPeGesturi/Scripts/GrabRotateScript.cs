@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GrabRotateScript : MonoBehaviour, InteractionListenerInterface
+public class GrabRotateScript : UnityEngine.MonoBehaviour, InteractionListenerInterface
 {
 	[Tooltip("Material used to outline the object when selected.")]
 	public Material selectedObjectMaterial;
@@ -57,9 +57,9 @@ public class GrabRotateScript : MonoBehaviour, InteractionListenerInterface
     private InteractionManager GetInteractionManager()
     {
         // find the proper interaction manager
-        MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+        UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 
-        foreach (MonoBehaviour monoScript in monoScripts)
+        foreach (UnityEngine.MonoBehaviour monoScript in monoScripts)
         {
             if ((monoScript is InteractionManager) && monoScript.enabled)
             {

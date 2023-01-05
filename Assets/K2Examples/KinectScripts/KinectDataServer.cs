@@ -11,7 +11,7 @@ using UnityEngine.Networking.Types;
 /// <summary>
 /// Kinect data server is the component that transmits the Kinect body data to Kinect data clients over the network.
 /// </summary>
-public class KinectDataServer : MonoBehaviour 
+public class KinectDataServer : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Port to be used for incoming connections.")]
 	public int listenOnPort = 8888;

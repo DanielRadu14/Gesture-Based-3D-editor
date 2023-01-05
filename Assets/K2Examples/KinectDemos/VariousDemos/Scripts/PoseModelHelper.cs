@@ -13,7 +13,7 @@ using System.Text;
 /// Pose model helper matches joints to model transforms.
 /// </summary>
 [RequireComponent(typeof(Animator))]
-public class PoseModelHelper : MonoBehaviour
+public class PoseModelHelper : UnityEngine.MonoBehaviour
 {	
 	// Variable to hold all them bones. It will initialize the same size as initialRotations.
 	protected Transform[] bones;

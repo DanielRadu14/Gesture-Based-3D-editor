@@ -56,7 +56,7 @@ public struct VisualGestureData
 /// <summary>
 /// Visual gesture manager is the component that manages the visual (VGB) gestures.
 /// </summary>
-public class VisualGestureManager : MonoBehaviour 
+public class VisualGestureManager : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Index of the player, tracked by this component. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
 	public int playerIndex = 0;
@@ -74,7 +74,7 @@ public class VisualGestureManager : MonoBehaviour
 	public float minProgress = 0.1f;
 
 	[Tooltip("List of the visual gesture listeners in the scene. If the list is empty, the available gesture listeners will be detected at the scene start up.")]
-	public List<MonoBehaviour> visualGestureListeners;
+	public List<UnityEngine.MonoBehaviour> visualGestureListeners;
 	
 	[Tooltip("UI-Text to display the VG-manager debug messages.")]
 	public UnityEngine.UI.Text debugText;
@@ -465,15 +465,15 @@ public class VisualGestureManager : MonoBehaviour
 			// try to automatically detect the available gesture listeners in the scene
 			if(visualGestureListeners.Count == 0)
 			{
-				MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+                UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 				
-				foreach(MonoBehaviour monoScript in monoScripts)
+				foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 				{
 //					if(typeof(VisualGestureListenerInterface).IsAssignableFrom(monoScript.GetType()) &&
 //					   monoScript.enabled)
 					if((monoScript is VisualGestureListenerInterface) && monoScript.enabled)
 					{
-						visualGestureListeners.Add(monoScript);
+                        visualGestureListeners.Add(monoScript);
 					}
 				}
 			}

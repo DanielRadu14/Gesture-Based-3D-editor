@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class LoadLevelWhenNoUser : MonoBehaviour 
+public class LoadLevelWhenNoUser : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Next level number. No level is loaded, if the number is negative.")]
 	public int nextLevel = -1;

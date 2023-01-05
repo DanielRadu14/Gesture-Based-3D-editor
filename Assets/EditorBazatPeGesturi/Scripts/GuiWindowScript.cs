@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GuiWindowScript : MonoBehaviour 
+public class GuiWindowScript : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("GUI-Window rectangle in screen coordinates (pixels).")]
 	public Rect guiWindowRect = new Rect(-140, 40, 140, 420);

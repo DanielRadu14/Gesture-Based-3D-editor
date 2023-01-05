@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class LoadFirstLevel : MonoBehaviour 
+public class LoadFirstLevel : UnityEngine.MonoBehaviour 
 {
 	private bool levelLoaded = false;
 	

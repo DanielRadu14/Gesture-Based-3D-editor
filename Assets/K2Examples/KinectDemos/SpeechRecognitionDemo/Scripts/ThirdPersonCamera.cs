@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class ThirdPersonCamera : MonoBehaviour
+public class ThirdPersonCamera : UnityEngine.MonoBehaviour
 {
 	[Tooltip("Smoothing factor of camera motion.")]
 	public float smooth = 3f;		// a public variable to adjust smoothing of camera motion

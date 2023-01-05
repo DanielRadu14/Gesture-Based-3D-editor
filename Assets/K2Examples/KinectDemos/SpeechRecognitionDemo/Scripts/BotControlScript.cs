@@ -5,7 +5,7 @@ using System.Collections;
 [RequireComponent(typeof (Animator))]
 [RequireComponent(typeof (CapsuleCollider))]
 [RequireComponent(typeof (Rigidbody))]
-public class BotControlScript : MonoBehaviour, SpeechRecognitionInterface
+public class BotControlScript : UnityEngine.MonoBehaviour, SpeechRecognitionInterface
 {
 //	[System.NonSerialized]					
 //	public float lookWeight;					// the amount to transition when using head look

@@ -4,7 +4,7 @@ using System.Collections;
 using System;
 
 
-public class RaiseHandListener : MonoBehaviour, KinectGestures.GestureListenerInterface
+public class RaiseHandListener : UnityEngine.MonoBehaviour, KinectGestures.GestureListenerInterface
 {
 	// singleton instance of the class
 	private static RaiseHandListener instance = null;

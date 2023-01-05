@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SimpleBackgroundRemoval : MonoBehaviour 
+public class SimpleBackgroundRemoval : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Whether to display the foreground texture on the screen or not.")]
 	public bool displayForeground = true;

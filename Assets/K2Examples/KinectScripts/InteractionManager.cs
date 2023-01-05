@@ -49,7 +49,7 @@ public interface InteractionListenerInterface
 /// <summary>
 /// Interaction manager is component that controls the hand cursor and manages the hand interactions.
 /// </summary>
-public class InteractionManager : MonoBehaviour 
+public class InteractionManager : UnityEngine.MonoBehaviour 
 {
 	/// <summary>
 	/// The hand event types.
@@ -102,7 +102,7 @@ public class InteractionManager : MonoBehaviour
 	//public bool convertMouseToFullScreen = false;
 	
 	[Tooltip("List of the interaction listeners in the scene. If the list is empty, the available interaction listeners will be detected at scene start up.")]
-	public List<MonoBehaviour> interactionListeners;
+	public List<UnityEngine.MonoBehaviour> interactionListeners;
 
 	[Tooltip("UI-Text to display the interaction-manager debug messages.")]
 	public Text debugText;
@@ -396,15 +396,15 @@ public class InteractionManager : MonoBehaviour
 		// try to automatically detect the available interaction listeners in the scene
 		if(interactionListeners.Count == 0)
 		{
-			MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+            UnityEngine.MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(UnityEngine.MonoBehaviour)) as UnityEngine.MonoBehaviour[];
 
-			foreach(MonoBehaviour monoScript in monoScripts)
+			foreach(UnityEngine.MonoBehaviour monoScript in monoScripts)
 			{
 //				if(typeof(InteractionListenerInterface).IsAssignableFrom(monoScript.GetType()) &&
 //					monoScript.enabled)
 				if((monoScript is InteractionListenerInterface) && monoScript.enabled)
 				{
-					interactionListeners.Add(monoScript);
+                    interactionListeners.Add(monoScript);
 				}
 			}
 		}

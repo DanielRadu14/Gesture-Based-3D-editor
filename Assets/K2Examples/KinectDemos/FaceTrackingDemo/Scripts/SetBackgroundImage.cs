@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SetBackgroundImage : MonoBehaviour 
+public class SetBackgroundImage : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("RawImage used to display the color camera feed on the scene background.")]
 	public UnityEngine.UI.RawImage backgroundImage;

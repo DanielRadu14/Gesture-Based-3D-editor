@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-public class PoseDetectorScript : MonoBehaviour 
+public class PoseDetectorScript : UnityEngine.MonoBehaviour 
 {
     [Tooltip("User avatar model, who needs to reach the target pose.")]
     public PoseModelHelper avatarModel;

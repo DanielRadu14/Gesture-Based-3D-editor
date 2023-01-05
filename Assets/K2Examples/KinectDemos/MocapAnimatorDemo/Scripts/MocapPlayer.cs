@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// MocapPlayer plays the recorded animation on the model it is attached to.
 /// </summary>
-public class MocapPlayer : MonoBehaviour
+public class MocapPlayer : UnityEngine.MonoBehaviour
 {
     // reference to the Animator-component
     private Animator playerAnimator = null;

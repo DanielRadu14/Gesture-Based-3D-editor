@@ -7,7 +7,7 @@ using System.Text;
 using System;
 
 
-public class CloudFaceManager : MonoBehaviour 
+public class CloudFaceManager : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Service location for Face API.")]
 	public string faceServiceLocation = "westus";

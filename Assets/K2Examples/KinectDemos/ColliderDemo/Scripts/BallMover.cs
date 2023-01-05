@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class BallMover : MonoBehaviour 
+public class BallMover : UnityEngine.MonoBehaviour 
 {
 	void Update () 
 	{

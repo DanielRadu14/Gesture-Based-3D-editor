@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CameraPitchCorrector : MonoBehaviour 
+public class CameraPitchCorrector : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Smooth factor used for the camera re-orientation.")]
 	public float smoothFactor = 10f;

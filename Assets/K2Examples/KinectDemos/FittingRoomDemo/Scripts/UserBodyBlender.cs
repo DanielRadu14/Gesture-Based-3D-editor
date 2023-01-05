@@ -2,7 +2,7 @@
 using System.Collections;
 
 
-public class UserBodyBlender : MonoBehaviour 
+public class UserBodyBlender : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Allowed depth distance between the user and the clothing model, in meters.")]
 	[Range(-0.5f, 0.5f)]

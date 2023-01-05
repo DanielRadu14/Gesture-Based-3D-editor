@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class JumpTrigger : MonoBehaviour 
+public class JumpTrigger : UnityEngine.MonoBehaviour 
 {
 	void OnTriggerEnter()
 	{

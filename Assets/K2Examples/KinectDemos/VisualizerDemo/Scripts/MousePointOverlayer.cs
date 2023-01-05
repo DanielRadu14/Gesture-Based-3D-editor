@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MousePointOverlayer : MonoBehaviour 
+public class MousePointOverlayer : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Whether to wait for mouse click or not.")]
 	public bool waitForClick = true;

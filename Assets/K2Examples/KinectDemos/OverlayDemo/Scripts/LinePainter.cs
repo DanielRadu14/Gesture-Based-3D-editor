@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class LinePainter : MonoBehaviour 
+public class LinePainter : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Line renderer used for the line drawing.")]
 	public LineRenderer linePrefab;

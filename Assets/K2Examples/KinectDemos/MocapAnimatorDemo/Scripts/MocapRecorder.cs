@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 /// MocapRecorder records the avatar motion into the given animation clip.
 /// </summary>
-public class MocapRecorder : MonoBehaviour
+public class MocapRecorder : UnityEngine.MonoBehaviour
 {
     [Tooltip("The avatar, whose motion will be captured in the animation clip.")]
     public AvatarController avatarModel;

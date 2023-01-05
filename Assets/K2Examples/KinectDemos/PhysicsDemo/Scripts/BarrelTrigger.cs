@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BarrelTrigger : MonoBehaviour 
+public class BarrelTrigger : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Reference to the BallController-component to be invoked, when the barrel gets hit by a ball.")]
 	public BallController ballController;

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Text;
 
-public class WebcamSource : MonoBehaviour 
+public class WebcamSource : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Selected web-camera name. If left empty, the first available web camera will be selected.")]
 	public string webcamName;

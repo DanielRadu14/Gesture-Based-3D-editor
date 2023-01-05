@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using System.Text;
 
 
-public class KinectDataClient : MonoBehaviour 
+public class KinectDataClient : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Port used for server broadcast discovery.")]
 	public int broadcastPort = 8889;

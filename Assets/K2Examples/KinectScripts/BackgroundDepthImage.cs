@@ -4,7 +4,7 @@ using System.Collections;
 /// <summary>
 /// Background depth image is component that displays the depth camera image on GUI texture, usually the scene background.
 /// </summary>
-public class BackgroundDepthImage : MonoBehaviour 
+public class BackgroundDepthImage : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("RawImage used to display the depth image.")]
 	public UnityEngine.UI.RawImage backgroundImage;

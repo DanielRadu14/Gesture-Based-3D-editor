@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerDetectorController : MonoBehaviour 
+public class PlayerDetectorController : UnityEngine.MonoBehaviour 
 {
 	public float userLostMaxTime = 2f;
 

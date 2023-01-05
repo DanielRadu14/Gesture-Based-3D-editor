@@ -6,7 +6,7 @@ using UnityEditor;
 
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
-public class CubeGenerator : MonoBehaviour
+public class CubeGenerator : UnityEngine.MonoBehaviour
 {
     Mesh planeMesh;
     public Mesh cubeMesh;
@@ -61,14 +61,14 @@ public class CubeGenerator : MonoBehaviour
 
             if (!boxColliderAttached)
             {
-                //this.gameObject.AddComponent<MeshCollider>().convex = true;
-                //boxColliderAttached = true;
+                this.gameObject.AddComponent<MeshCollider>().convex = true;
+                boxColliderAttached = true;
             }
 
             if(size != previousSize)
             {
-                //Destroy(this.gameObject.GetComponent<MeshCollider>());
-                //this.gameObject.AddComponent<MeshCollider>().convex = true;
+                Destroy(this.gameObject.GetComponent<MeshCollider>());
+                this.gameObject.AddComponent<MeshCollider>().convex = true;
             }
 
             //help keep track of changes

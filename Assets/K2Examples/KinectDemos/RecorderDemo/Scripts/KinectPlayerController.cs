@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class KinectPlayerController : MonoBehaviour 
+public class KinectPlayerController : UnityEngine.MonoBehaviour 
 {
 	private SpeechManager speechManager;
 	private KinectRecorderPlayer saverPlayer;

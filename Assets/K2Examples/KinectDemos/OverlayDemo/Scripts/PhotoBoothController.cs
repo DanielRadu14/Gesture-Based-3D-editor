@@ -2,7 +2,7 @@
 using System.Collections;
 using System.IO;
 
-public class PhotoBoothController : MonoBehaviour, KinectGestures.GestureListenerInterface, InteractionListenerInterface
+public class PhotoBoothController : UnityEngine.MonoBehaviour, KinectGestures.GestureListenerInterface, InteractionListenerInterface
 {
 //	[Tooltip("GUI-texture used to display the color camera feed on the scene background.")]
 //	public GUITexture backgroundImage;

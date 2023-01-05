@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class HeadMover : MonoBehaviour 
+public class HeadMover : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("The transform that needs to be followed by the avatar's head, usually the position reported by the HMD tracker.")]
 	public Transform targetTransform;

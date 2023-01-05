@@ -2,7 +2,7 @@
 using System.Collections;
 
 
-public class SceneMeshVisualizer : MonoBehaviour
+public class SceneMeshVisualizer : UnityEngine.MonoBehaviour
 {
 	[Tooltip("Minimum tracked distance from the sensor, in meters.")]
     [Range(0f, 10f)]

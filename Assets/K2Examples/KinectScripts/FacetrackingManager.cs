@@ -9,7 +9,7 @@ using System.Text;
 /// <summary>
 /// Facetracking manager is the component that manages the head and face tracking.
 /// </summary>
-public class FacetrackingManager : MonoBehaviour 
+public class FacetrackingManager : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("Index of the player, tracked by this component. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
 	public int playerIndex = 0;

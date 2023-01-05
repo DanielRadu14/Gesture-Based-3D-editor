@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class LoadLevelWhenUserDetected : MonoBehaviour 
+public class LoadLevelWhenUserDetected : UnityEngine.MonoBehaviour 
 {
 	[Tooltip("User pose that will trigger the loading of next level.")]
 	public KinectGestures.Gestures expectedUserPose = KinectGestures.Gestures.None;
