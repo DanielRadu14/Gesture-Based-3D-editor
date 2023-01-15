@@ -10,6 +10,8 @@ public class GameModePicker : UnityEngine.MonoBehaviour
     [Tooltip("UI-Text used to display the picked game mode.")]
     public UnityEngine.UI.Text gameModeDebugText;
 
+    private GameObject planeObject;
+
     private List<GameObject> deactivatedGameObjects = new List<GameObject>();
     private List<string> gameObjectsToDeactivateFromInterface = new List<string> { "Canvas/Parallelepiped", "Canvas/Sphere", "Canvas/Cube",
                                                                                    "SelectableObjects/CreatableObject", "SelectableObjects/SelectableTextures"};
@@ -39,6 +41,9 @@ public class GameModePicker : UnityEngine.MonoBehaviour
         {
             deactivatedGameObjects.Add(GameObject.Find(gameObjectName));
         }
+
+        planeObject = GameObject.Find("Plane");
+        //planeObject.SetActive(false);
     }
 
     private void Update()
@@ -104,6 +109,8 @@ public class GameModePicker : UnityEngine.MonoBehaviour
                 }
 
                 UpdateActiveGameObjects(false);
+                //planeObject.SetActive(true);
+
                 break;
             default:
                 gameModeStat = GameMode.Default;

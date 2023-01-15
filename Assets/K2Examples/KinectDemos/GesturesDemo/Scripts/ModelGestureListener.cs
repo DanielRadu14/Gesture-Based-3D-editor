@@ -294,7 +294,7 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
             if (progress > 0.5f)
             {
                 leanLeft = true;
-                yaw += Time.deltaTime * ThirdPerson.Instance.followSpeed;
+                yaw += Time.deltaTime * ThirdPersonTarget.Instance.rotationSpeed;
             }
             else
             {
@@ -306,7 +306,7 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
             if (progress > 0.5f)
             {
                 leanRight = true;
-                yaw -= Time.deltaTime * ThirdPerson.Instance.followSpeed;
+                yaw -= Time.deltaTime * ThirdPersonTarget.Instance.rotationSpeed;
             }
             else
             {
@@ -318,7 +318,7 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
             if (progress > 0.5f)
             {
                 leanForward = true;
-                pitch += Time.deltaTime * ThirdPerson.Instance.followSpeed;
+                pitch += Time.deltaTime * ThirdPersonTarget.Instance.rotationSpeed;
             }
             else
             {
@@ -330,7 +330,7 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
             if (progress > 0.5f)
             {
                 leanBack = true;
-                pitch -= Time.deltaTime * ThirdPerson.Instance.followSpeed;
+                pitch -= Time.deltaTime * ThirdPersonTarget.Instance.rotationSpeed;
             }
             else
             {

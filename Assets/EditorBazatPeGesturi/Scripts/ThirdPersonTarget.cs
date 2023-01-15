@@ -5,9 +5,32 @@ using UnityEngine;
 public class ThirdPersonTarget : MonoBehaviour
 {
     public Transform camera;
-    public Vector3 moveDir;
+    private Vector3 moveDir;
     public float moveFactor = 3.0f;
+    public float rotationSpeed = 3f;
     private ModelGestureListener gestureListener;
+    protected static ThirdPersonTarget instance = null;
+
+    public static ThirdPersonTarget Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(this);
+            return;
+        }
+    }
 
     void Start()
     {
