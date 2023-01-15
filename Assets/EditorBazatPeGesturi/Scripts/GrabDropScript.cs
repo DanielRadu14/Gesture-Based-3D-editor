@@ -37,7 +37,10 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 	[Tooltip("UI-Text used to display information messages.")]
 	public UnityEngine.UI.Text infoGuiText;
 
-	[Tooltip("Interaction manager instance, used to detect hand interactions. If left empty, it will be the first interaction manager found in the scene.")]
+    [Tooltip("UI-Text used to display the picked game mode.")]
+    public UnityEngine.UI.Text debugText;
+
+    [Tooltip("Interaction manager instance, used to detect hand interactions. If left empty, it will be the first interaction manager found in the scene.")]
 	private InteractionManager interactionManager;
 
     [Tooltip("Index of the player, tracked by the respective InteractionManager. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
@@ -74,6 +77,9 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
     public Dictionary<GameObject, Dictionary<GameObject, Vector3>> objectCorrespondingVertices = 
         new Dictionary<GameObject, Dictionary<GameObject, Vector3>>();
     private Vector3 draggedVertex = Vector3.zero;
+    private CubeGenerator draggedVertexCubeGenerator = null;
+
+    private bool gameModeSelected = false;
 
     protected static GrabDropScript instance = null;
     public static GrabDropScript Instance
@@ -187,7 +193,12 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 
     void Update() 
 	{
-		if(interactionManager != null && interactionManager.IsInteractionInited())
+        if (draggedVertexCubeGenerator != null)
+            debugText.text = draggedVertexCubeGenerator.gameObject.name;
+        else
+            debugText.text = "null";
+
+        if (interactionManager != null && interactionManager.IsInteractionInited())
 		{
 			if(resetObjects && draggedObject == null)
 			{
@@ -196,16 +207,30 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 				ResetObjects();
 			}
 
-			if(draggedObject == null)
+            //Terrain Mode
+            //move grabbed vertex as long as last hand event is Gripped
+            if (GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Terrain && draggedVertexCubeGenerator != null)
+            {
+                Vector3 newPos = new Vector3(0, Time.deltaTime * 2.0f, 0);
+                draggedVertexCubeGenerator.AssignShiftValueAndDraggedVertex(draggedVertex, newPos);
+                draggedVertex = draggedVertex + newPos;
+
+                if(lastHandEvent == InteractionManager.HandEventType.Release)
+                {
+                    draggedVertexCubeGenerator = null;
+                }
+            }
+
+            if (draggedObject == null)
 			{
-				// no object is currently selected or dragged.
-				bool bHandIntAllowed = (leftHandInteraction && interactionManager.IsLeftHandPrimary()) || (rightHandInteraction && interactionManager.IsRightHandPrimary());
+                // no object is currently selected or dragged.
+                bool bHandIntAllowed = (leftHandInteraction && interactionManager.IsLeftHandPrimary()) || (rightHandInteraction && interactionManager.IsRightHandPrimary());
 
 				// check if there is an underlying object to be selected
 				if(lastHandEvent == InteractionManager.HandEventType.Grip && bHandIntAllowed)
 				{
-					// convert the normalized screen pos to pixel pos
-					screenNormalPos = interactionManager.IsLeftHandPrimary() ? interactionManager.GetLeftHandScreenPos() : interactionManager.GetRightHandScreenPos();
+                    // convert the normalized screen pos to pixel pos
+                    screenNormalPos = interactionManager.IsLeftHandPrimary() ? interactionManager.GetLeftHandScreenPos() : interactionManager.GetRightHandScreenPos();
 
 					screenPixelPos.x = (int)(screenNormalPos.x * (screenCamera ? screenCamera.pixelWidth : Screen.width));
 					screenPixelPos.y = (int)(screenNormalPos.y * (screenCamera ? screenCamera.pixelHeight : Screen.height));
@@ -215,33 +240,45 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 					RaycastHit hit;
 					if(Physics.Raycast(ray, out hit))
 					{
-						foreach(GameObject obj in draggableObjects)
+                        //all created objects in the scene, all vertices from the objects in the scene, all selectable objects (panels on the right of the screen)
+                        foreach (GameObject obj in draggableObjects)
 						{
 							if(hit.collider.gameObject == obj)
 							{
-                                if(interactionManager.IsRightHandPrimary())
+                                if (interactionManager.IsRightHandPrimary())
                                 {
                                     // an object was hit by the ray. select it and start drgging
                                     draggedObject = obj;
 
                                     if (draggableVertices.Contains(draggedObject))
                                     {
-                                        draggedVertex = FindVertexRelativePosition(draggedObject);
+                                        if(GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Vertex)
+                                        {
+                                            draggedVertex = FindVertexRelativePosition(draggedObject);
+                                        }
+                                        else if(GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Terrain)
+                                        {
+                                            draggedVertex = FindVertexRelativePosition(draggedObject);
+                                            draggedVertexCubeGenerator = GetCubeGeneratorForDraggedVertex(draggedObject);
+                                        }
                                     }
 
-                                    draggedObjectOffset = hit.point - draggedObject.transform.position;
-                                    draggedObjectOffset.z = 0; // don't change z-pos
+                                    if(GameModePicker.Instance.GetGameMode() != GameModePicker.GameMode.Terrain)
+                                    {
+                                        draggedObjectOffset = hit.point - draggedObject.transform.position;
+                                        draggedObjectOffset.z = 0; // don't change z-pos
 
-                                    draggedNormalZ = (minZ + screenNormalPos.z * (maxZ - minZ)) -
-                                        draggedObject.transform.position.z; // start from the initial hand-z
+                                        draggedNormalZ = (minZ + screenNormalPos.z * (maxZ - minZ)) -
+                                            draggedObject.transform.position.z; // start from the initial hand-z
 
-                                    // set selection material
-                                    draggedObjectMaterial = draggedObject.GetComponent<Renderer>().material;
-                                    draggedObject.GetComponent<Renderer>().material = selectedObjectMaterial;
+                                        // set selection material
+                                        draggedObjectMaterial = draggedObject.GetComponent<Renderer>().material;
+                                        draggedObject.GetComponent<Renderer>().material = selectedObjectMaterial;
 
-                                    // stop using gravity while dragging object
-                                    if(draggedObject.GetComponent<Rigidbody>() != null)
-                                        draggedObject.GetComponent<Rigidbody>().useGravity = false;
+                                        // stop using gravity while dragging object
+                                        if (draggedObject.GetComponent<Rigidbody>() != null)
+                                            draggedObject.GetComponent<Rigidbody>().useGravity = false;
+                                    }
                                 }
 								else if(interactionManager.IsLeftHandPrimary())
                                 {
@@ -253,6 +290,7 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
                             }
 						}
 
+                        //all selectable textures panels on the left of the screen
                         foreach (GameObject obj in SelectableObjects.Instance.selectableTextureTypes)
                         {
                             if (hit.collider.gameObject == obj)
@@ -270,9 +308,26 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
                                 break;
                             }
                         }
+
+                        //all the selectable game mode types panels on top of the screen
+                        foreach (GameObject obj in SelectableObjects.Instance.selectableGameModeTypes)
+                        {
+                            if (hit.collider.gameObject == obj)
+                            {
+                                if (interactionManager.IsRightHandPrimary())
+                                {
+                                    if(!gameModeSelected)
+                                    {
+                                        GameModePicker.Instance.SetGameMode(obj.name);
+                                        gameModeSelected = true;
+                                        StartCoroutine(SetGameMode());
+                                    }
+                                }
+                                break;
+                            }
+                        }
                     }
 				}
-				
 			}
 			else
 			{
@@ -294,7 +349,8 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 
                         newObjectPos = screenCamera.ScreenToWorldPoint(screenPixelPos) - draggedObjectOffset;
 
-                        if (!SelectableObjects.Instance.selectableObjectTypes.Contains(draggedObject))
+                        //if it's an object or a vertex, move it to the new position
+                        if (!SelectableObjects.Instance.selectableObjectTypes.Contains(draggedObject) && GameModePicker.Instance.GetGameMode() != GameModePicker.GameMode.Terrain)
                         {
                             draggedObject.transform.position = Vector3.Lerp(draggedObject.transform.position, newObjectPos, dragSpeed * Time.deltaTime);
                         }
@@ -304,18 +360,16 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 
                         if (isReleased)
                         {
-                            //create object
+                            //create object (a creatable object type panel was selected)
                             if (SelectableObjects.Instance.selectableObjectTypes.Contains(draggedObject))
                             {
                                 CreateObjectType.Instance.CreateObject(draggedObject, newObjectPos);
                             }
-                            //drop dragged object
+                            //drop dragged object (whole object or vertex)
                             else
                             {
-                                Destroy(draggedObject.GetComponent<MeshCollider>());
-                                draggedObject.AddComponent<MeshCollider>().convex = true;
-
-                                if (draggableVertices.Contains(draggedObject))
+                                //drop dragged vertex
+                                if (draggableVertices.Contains(draggedObject) && GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Vertex)
                                 {
                                     float x = newObjectPos.x != draggedVertex.x ? newObjectPos.x - draggedVertex.x : newObjectPos.x;
                                     float y = newObjectPos.x != draggedVertex.y ? newObjectPos.y - draggedVertex.y : newObjectPos.y;
@@ -324,6 +378,12 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 
                                     CubeGenerator cubeGenerator = GetCubeGeneratorForDraggedVertex(draggedObject);
                                     cubeGenerator.AssignShiftValueAndDraggedVertex(draggedVertex, newPos);
+                                }
+                                //drop dragged object
+                                else
+                                {
+                                    Destroy(draggedObject.GetComponent<MeshCollider>());
+                                    draggedObject.AddComponent<MeshCollider>().convex = true;
                                 }
 
                                 if (useGravity)
@@ -338,6 +398,7 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
                             draggedObjectMaterial = null;
                         }
                     }
+                    //apply selected texture with the left hand
                     else if (interactionManager.IsLeftHandPrimary())
                     {
                         // continue dragging the object
@@ -396,7 +457,6 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
                     }
                 }
 			}
-
 		}
 	}
 
@@ -406,8 +466,13 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
         SelectTextureType.Instance.SetMaterial(null);
     }
 
+    private IEnumerator SetGameMode()
+    {
+        yield return new WaitForSeconds(1.0f);
+        gameModeSelected = false;
+    }
 
-	void OnGUI()
+    void OnGUI()
 	{
 		if(infoGuiText != null && interactionManager != null && interactionManager.IsInteractionInited())
 		{

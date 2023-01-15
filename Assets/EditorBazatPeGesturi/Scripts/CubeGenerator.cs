@@ -17,10 +17,12 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
     [SerializeField] public float size;
     [SerializeField] public int resolution;
     [SerializeField] bool isSphere;
+    [SerializeField] bool isPlane;
     [Range(0, 1)] public float morphValue;
     [SerializeField] Vector3 shiftVertex;
     public Vector3 draggedVertex;
     public GameObject vertexObject;
+    private GameObject verticesContainer;
 
     //helper Variables
     float previousSize;
@@ -29,6 +31,7 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
     float previousMorphValue;
     Vector3 previousShiftVertex;
     Vector3 previousOrigin;
+    Quaternion previousRotation;
     Vector3 previousDraggedVertex;
 
     private bool boxColliderAttached;
@@ -41,6 +44,8 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         meshFilter.mesh = new Mesh();
 
         boxColliderAttached = false;
+
+        verticesContainer = new GameObject(this.gameObject.name + " - vertices");
     }
 
     void Update()
@@ -52,23 +57,45 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         
         if (ValuesHaveChanged())
         {
-            GenerateCube(size, resolution);
-            if (isSphere)
+            if(isPlane)
             {
-                cubeMesh.vertices = SpherizeVectors(cubeMesh.vertices);
-            }
-            AssignMesh(cubeMesh);
+                Mesh planeMesh = GeneratePlane(size, resolution);
 
-            if (!boxColliderAttached)
-            {
-                this.gameObject.AddComponent<MeshCollider>().convex = true;
-                boxColliderAttached = true;
-            }
+                cubeMesh.triangles = new int[0];
+                cubeMesh.vertices = planeMesh.vertices;
+                cubeMesh.triangles = planeMesh.triangles;
 
-            if(size != previousSize)
+                AssignMesh(planeMesh);
+
+                DestroyVerticesObjects();
+                GenerateVerticesObjects();
+
+                if (!boxColliderAttached)
+                {
+                    this.gameObject.AddComponent<BoxCollider>();
+                    boxColliderAttached = true;
+                }
+            }
+            else
             {
-                Destroy(this.gameObject.GetComponent<MeshCollider>());
-                this.gameObject.AddComponent<MeshCollider>().convex = true;
+                GenerateCube(size, resolution);
+                if (isSphere)
+                {
+                    cubeMesh.vertices = SpherizeVectors(cubeMesh.vertices);
+                }
+                AssignMesh(cubeMesh);
+
+                if (!boxColliderAttached)
+                {
+                    this.gameObject.AddComponent<MeshCollider>().convex = true;
+                    boxColliderAttached = true;
+                }
+
+                if (size != previousSize)
+                {
+                    Destroy(this.gameObject.GetComponent<MeshCollider>());
+                    this.gameObject.AddComponent<MeshCollider>().convex = true;
+                }
             }
 
             //help keep track of changes
@@ -105,15 +132,25 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         List<GameObject> createdVerticesObjects = new List<GameObject>();
         Dictionary<GameObject, Vector3> vertexToPositionAuxMap = new Dictionary<GameObject, Vector3>();
 
+        verticesContainer.transform.position = Vector3.zero;
+        verticesContainer.transform.rotation = Quaternion.identity;
+
         foreach (Vector3 vertexRelativePos in cubeMesh.vertices)
         {
             if (alreadyCreatedVerticesObects.Contains(vertexRelativePos))
                 continue;
 
-            GameObject vertexGameObject = Instantiate(vertexObject, this.transform.position + vertexRelativePos, Quaternion.identity);
+            GameObject vertexGameObject = Instantiate(vertexObject, vertexRelativePos, Quaternion.identity);
             vertexGameObject.name = "Vertex" + GrabDropScript.Instance.vertexObjectsCount++;
-            vertexGameObject.transform.localScale = new Vector3(size / 5, size / 5, size / 5);
-            
+            vertexGameObject.transform.localScale = new Vector3(size / 5 / resolution, size / 5 / resolution, size / 5 / resolution);
+            vertexGameObject.transform.parent = verticesContainer.transform;
+
+            if (GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Default)
+                vertexGameObject.GetComponent<SphereCollider>().enabled = false;
+            else if (GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Vertex ||
+                GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Terrain)
+                vertexGameObject.GetComponent<SphereCollider>().enabled = true;
+
             GrabDropScript.Instance.draggableVertices.Add(vertexGameObject);
             GrabDropScript.Instance.draggableObjects.Add(vertexGameObject);
 
@@ -122,6 +159,9 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
             alreadyCreatedVerticesObects.Add(vertexRelativePos);
             createdVerticesObjects.Add(vertexGameObject);
         }
+        
+        verticesContainer.transform.rotation = this.gameObject.transform.rotation;
+        verticesContainer.transform.position = this.gameObject.transform.position;
 
         GrabDropScript.Instance.objectCorrespondingVertices.Add(this.gameObject, vertexToPositionAuxMap);
         //DisplayObjectCorrespondingVertices();
@@ -142,6 +182,7 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
 
     public void AssignShiftValueAndDraggedVertex(Vector3 draggedVertex, Vector3 shiftVertex)
     {
+        //GrabDropScript.Instance.debugText.text = "vertex " + draggedVertex + " shift vertex " + shiftVertex;
         this.draggedVertex = draggedVertex;
         this.shiftVertex = shiftVertex;
     }
@@ -350,7 +391,7 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
 
     bool ValuesHaveChanged()
     {
-        if (previousSize != size || previousResolution != resolution || previousOrigin != this.transform.position || previousSphereState != isSphere || morphValue != previousMorphValue)
+        if (previousSize != size || previousResolution != resolution || previousOrigin != this.transform.position || previousRotation != this.transform.rotation || previousSphereState != isSphere || morphValue != previousMorphValue)
         {
             return true;
         }
@@ -362,9 +403,7 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         previousSize = size;
         previousResolution = resolution;
         previousOrigin = this.transform.position;
-        previousSize = size;
-        previousResolution = resolution;
-        previousOrigin = this.transform.position;
+        previousRotation = this.transform.rotation;
         previousSphereState = isSphere;
         previousMorphValue = morphValue;
         previousShiftVertex = shiftVertex;

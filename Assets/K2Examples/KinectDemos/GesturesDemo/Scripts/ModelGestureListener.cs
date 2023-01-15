@@ -26,7 +26,13 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
 	private bool wheel;
 	private float wheelAngle = 0f;
 
-	private bool raiseHand = false;
+    private float yaw, pitch;
+    private bool leanLeft;
+    private bool leanRight;
+    private bool leanForward;
+    private bool leanBack;
+
+    private bool raiseHand = false;
     private bool swipeDown = false;
     private bool swipeUp = false;
 
@@ -123,6 +129,36 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
         return false;
     }
 
+    public bool IsLeaningLeft()
+    {
+        return leanLeft;
+    }
+
+    public bool IsLeaningRight()
+    {
+        return leanRight;
+    }
+
+    public bool IsLeaningForward()
+    {
+        return leanForward;
+    }
+
+    public bool IsLeaningBack()
+    {
+        return leanBack;
+    }
+
+    public float GetPitch()
+    {
+        return pitch;
+    }
+
+    public float GetYaw()
+    {
+        return yaw;
+    }
+
     /// <summary>
     /// Invoked when a new user is detected. Here you can start gesture tracking by invoking KinectManager.DetectGesture()-function.
     /// </summary>
@@ -145,6 +181,11 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
 
         manager.DetectGesture(userId, KinectGestures.Gestures.SwipeDown);
         manager.DetectGesture(userId, KinectGestures.Gestures.SwipeUp);
+
+        manager.DetectGesture(userId, KinectGestures.Gestures.LeanLeft);
+        manager.DetectGesture(userId, KinectGestures.Gestures.LeanRight);
+        manager.DetectGesture(userId, KinectGestures.Gestures.LeanForward);
+        manager.DetectGesture(userId, KinectGestures.Gestures.LeanBack);
 
         if (gestureInfo != null)
 		{
@@ -248,6 +289,54 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
                 wheel = false;
             }
         }
+        else if (gesture == KinectGestures.Gestures.LeanLeft)
+        {
+            if (progress > 0.5f)
+            {
+                leanLeft = true;
+                yaw += Time.deltaTime * ThirdPerson.Instance.followSpeed;
+            }
+            else
+            {
+                leanLeft = false;
+            }
+        }
+        else if (gesture == KinectGestures.Gestures.LeanRight)
+        {
+            if (progress > 0.5f)
+            {
+                leanRight = true;
+                yaw -= Time.deltaTime * ThirdPerson.Instance.followSpeed;
+            }
+            else
+            {
+                leanRight = false;
+            }
+        }
+        else if (gesture == KinectGestures.Gestures.LeanForward)
+        {
+            if (progress > 0.5f)
+            {
+                leanForward = true;
+                pitch += Time.deltaTime * ThirdPerson.Instance.followSpeed;
+            }
+            else
+            {
+                leanForward = false;
+            }
+        }
+        else if (gesture == KinectGestures.Gestures.LeanBack)
+        {
+            if (progress > 0.5f)
+            {
+                leanBack = true;
+                pitch -= Time.deltaTime * ThirdPerson.Instance.followSpeed;
+            }
+            else
+            {
+                leanBack = false;
+            }
+        }
     }
 
 	/// <summary>
@@ -307,6 +396,22 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
 		{
 			wheel = false;
 		}
+        else if (gesture == KinectGestures.Gestures.LeanLeft)
+        {
+            leanLeft = false;
+        }
+        else if (gesture == KinectGestures.Gestures.LeanRight)
+        {
+            leanRight = false;
+        }
+        else if (gesture == KinectGestures.Gestures.LeanForward)
+        {
+            leanForward = false;
+        }
+        else if (gesture == KinectGestures.Gestures.LeanBack)
+        {
+            leanBack = false;
+        }
 
         if (gestureInfo != null && progressDisplayed)
 		{
