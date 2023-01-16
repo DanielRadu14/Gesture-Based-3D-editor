@@ -191,6 +191,7 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
 
     void GenerateCube(float size, int resolution)
     {
+        List<Vector2> uvCoord = new List<Vector2>();
         vertices.Clear();
         triangles.Clear();
         DestroyVerticesObjects();
@@ -202,12 +203,30 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         List<int> frontTriangles = new List<int>(planeMesh.triangles);
         vertices.AddRange(frontVertices);
         triangles.AddRange(frontTriangles);
+        Vector2[] uv = new Vector2[(resolution + 1) * (resolution + 1)];
+        for (int i = 0, y = 0; y <= resolution; y++)
+        {
+            for (int x = 0; x <= resolution; x++, i++)
+            {
+                uv[i] = new Vector2((float)x / resolution, (float)y / resolution);
+            }
+        }
+        uvCoord.AddRange(new List<Vector2>(uv));
 
         //BackFace
         List<Vector3> backVertices = ShiftVertices(planeMesh.vertices, Vector3.forward * size / 2);
         List<int> backTriangles = ShiftTriangleIndexes(ReverseTriangles(planeMesh.triangles), vertices.Count);
         vertices.AddRange(backVertices);
         triangles.AddRange(backTriangles);
+        uv = new Vector2[(resolution + 1) * (resolution + 1)];
+        for (int i = 0, y = 0; y <= resolution; y++)
+        {
+            for (int x = 0; x <= resolution; x++, i++)
+            {
+                uv[i] = new Vector2((float)x / resolution, (float)y / resolution);
+            }
+        }
+        uvCoord.AddRange(new List<Vector2>(uv));
 
         //Dimension switch
         Mesh rotatedPlane = new Mesh();
@@ -219,12 +238,30 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         List<int> rightTriangles = ShiftTriangleIndexes(rotatedPlane.triangles, vertices.Count);
         vertices.AddRange(rightVertices);
         triangles.AddRange(rightTriangles);
+        uv = new Vector2[(resolution + 1) * (resolution + 1)];
+        for (int i = 0, y = 0; y <= resolution; y++)
+        {
+            for (int x = 0; x <= resolution; x++, i++)
+            {
+                uv[i] = new Vector2((float)x / resolution, (float)y / resolution);
+            }
+        }
+        uvCoord.AddRange(new List<Vector2>(uv));
 
         //LeftFace
         List<Vector3> leftVertices = ShiftVertices(rotatedPlane.vertices, Vector3.left * size / 2);
         List<int> leftTriangles = ShiftTriangleIndexes(ReverseTriangles(rotatedPlane.triangles), vertices.Count);
         vertices.AddRange(leftVertices);
         triangles.AddRange(leftTriangles);
+        uv = new Vector2[(resolution + 1) * (resolution + 1)];
+        for (int i = 0, y = 0; y <= resolution; y++)
+        {
+            for (int x = 0; x <= resolution; x++, i++)
+            {
+                uv[i] = new Vector2((float)x / resolution, (float)y / resolution);
+            }
+        }
+        uvCoord.AddRange(new List<Vector2>(uv));
 
         //Dimension switch 2: the enswitchening
         rotatedPlane.vertices = SwitchYAndZ(planeMesh.vertices);
@@ -235,16 +272,36 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         List<int> topTriangles = ShiftTriangleIndexes(rotatedPlane.triangles, vertices.Count);
         vertices.AddRange(topVertices);
         triangles.AddRange(topTriangles);
+        uv = new Vector2[(resolution + 1) * (resolution + 1)];
+        for (int i = 0, y = 0; y <= resolution; y++)
+        {
+            for (int x = 0; x <= resolution; x++, i++)
+            {
+                uv[i] = new Vector2((float)x / resolution, (float)y / resolution);
+            }
+        }
+        uvCoord.AddRange(new List<Vector2>(uv));
 
         //BottomFace
         List<Vector3> bottomVertices = ShiftVertices(rotatedPlane.vertices, Vector3.down * size / 2);
         List<int> bottomTriangles = ShiftTriangleIndexes(ReverseTriangles(rotatedPlane.triangles), vertices.Count);
         vertices.AddRange(bottomVertices);
         triangles.AddRange(bottomTriangles);
+        uv = new Vector2[(resolution + 1) * (resolution + 1)];
+        for (int i = 0, y = 0; y <= resolution; y++)
+        {
+            for (int x = 0; x <= resolution; x++, i++)
+            {
+                uv[i] = new Vector2((float)x / resolution, (float)y / resolution);
+            }
+        }
+        uvCoord.AddRange(new List<Vector2>(uv));
 
         cubeMesh.Clear();
         cubeMesh.vertices = vertices.ToArray();
         cubeMesh.triangles = triangles.ToArray();
+        cubeMesh.RecalculateNormals();
+        cubeMesh.uv = uvCoord.ToArray();
         GenerateVerticesObjects();
     }
 
@@ -288,6 +345,17 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         planeMesh.Clear();
         planeMesh.vertices = generatedVertices.ToArray();
         planeMesh.triangles = generatedTriangles.ToArray();
+        planeMesh.RecalculateNormals();
+
+        Vector2[] uv = new Vector2[(resolution + 1) * (resolution + 1)];
+        for (int i = 0, y = 0; y <= resolution; y++)
+        {
+            for (int x = 0; x <= resolution; x++, i++)
+            {
+                uv[i] = new Vector2((float)x / resolution, (float)y / resolution);
+            }
+        }
+        planeMesh.uv = uv;
         return planeMesh;
     }
 
@@ -297,17 +365,26 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         filterMesh.Clear();
         filterMesh.vertices = mesh.vertices;
         filterMesh.triangles = mesh.triangles;
-        filterMesh.RecalculateNormals();
-        
-        Vector2[] uv = new Vector2[(resolution + 1) * (resolution + 1)];
-        for (int i = 0, y = 0; y <= resolution; y++)
+
+        if(isPlane)
         {
-            for (int x = 0; x <= resolution; x++, i++)
+            filterMesh.RecalculateNormals();
+
+            Vector2[] uv = new Vector2[(resolution + 1) * (resolution + 1)];
+            for (int i = 0, y = 0; y <= resolution; y++)
             {
-                uv[i] = new Vector2((float) x / resolution, (float) y / resolution);
+                for (int x = 0; x <= resolution; x++, i++)
+                {
+                    uv[i] = new Vector2((float)x / resolution, (float)y / resolution);
+                }
             }
+            filterMesh.uv = uv;
         }
-        filterMesh.uv = uv;
+        else
+        {
+            filterMesh.normals = mesh.normals;
+            filterMesh.uv = mesh.uv;
+        }
     }
 
     void ModifyVertices()
@@ -334,9 +411,29 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
     List<Vector3> ShiftVertex(Vector3[] vertices, Vector3 shiftValue, Vector3 vertexToBeModified)
     {
         List<Vector3> shiftedVertices = new List<Vector3>();
+        List<Vector3> nearbyVertices = new List<Vector3>();
         foreach (Vector3 vertex in vertices)
         {
             if(vertex == vertexToBeModified)
+            {
+                Vector3 newPos = new Vector3(vertex.x + shiftValue.x, vertex.y + shiftValue.y, vertex.z + shiftValue.z);
+                shiftedVertices.Add(newPos);
+                nearbyVertices = GetNearbyVertices(vertex);
+            }
+            else
+            {
+                shiftedVertices.Add(vertex);
+            }
+        }
+        return ShiftNearbyVertices(shiftedVertices, shiftValue / 2, nearbyVertices);
+    }
+
+    List<Vector3> ShiftNearbyVertices(List<Vector3> vertices, Vector3 shiftValue, List<Vector3> verticesToBeModified)
+    {
+        List<Vector3> shiftedVertices = new List<Vector3>();
+        foreach (Vector3 vertex in vertices)
+        {
+            if (verticesToBeModified.Contains(vertex))
             {
                 Vector3 newPos = new Vector3(vertex.x + shiftValue.x, vertex.y + shiftValue.y, vertex.z + shiftValue.z);
                 shiftedVertices.Add(newPos);
@@ -347,6 +444,33 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
             }
         }
         return shiftedVertices;
+    }
+
+    private List<Vector3> GetNearbyVertices(Vector3 origin)
+    {
+        List<Vector3> nearbyVertices = new List<Vector3>();
+        foreach (Vector3 vertex in vertices)
+        {
+            if (IsNearbyVertex(origin, vertex))
+            {
+                nearbyVertices.Add(vertex);
+            }
+        }
+        return nearbyVertices;
+    }
+
+    private bool IsNearbyVertex(Vector3 origin, Vector3 possibleNearbyVertex)
+    {
+        if(origin == possibleNearbyVertex)
+            return false;
+
+        if (Mathf.Abs(possibleNearbyVertex.x - origin.x) <= size / resolution &&
+            Mathf.Abs(possibleNearbyVertex.y - origin.y) <= size / resolution &&
+            Mathf.Abs(possibleNearbyVertex.z - origin.z) <= size / resolution)
+        {
+            return true;
+        }
+        return false;
     }
 
     int[] ReverseTriangles(int[] triangles)

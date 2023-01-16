@@ -7,6 +7,8 @@ public class SetPlane : MonoBehaviour
     bool updated = false;
     float smooth = 5.0f;
     float tiltAngle = 90.0f;
+    public int size = 1000;
+    public int resolution = 10;
 
     void LateUpdate()
     {
@@ -15,7 +17,7 @@ public class SetPlane : MonoBehaviour
         this.gameObject.transform.rotation = Quaternion.Slerp(transform.rotation, target, 1);
 
         CubeGenerator cubeGenerator = this.gameObject.GetComponent<CubeGenerator>();
-        cubeGenerator.size = 1000;
-        cubeGenerator.resolution = 10;
+        cubeGenerator.size = size;
+        cubeGenerator.resolution = resolution;
     }
 }

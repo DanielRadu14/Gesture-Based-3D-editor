@@ -214,7 +214,16 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
             //move grabbed vertex as long as last hand event is Gripped
             if (GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Terrain && draggedVertexCubeGenerator != null)
             {
-                Vector3 newPos = new Vector3(0, 0, -Time.deltaTime * terrainDragSpeed);
+                float moveFactor;
+                if (interactionManager.IsRightHandPrimary())
+                {
+                    moveFactor = -Time.deltaTime * terrainDragSpeed;
+                }
+                else
+                {
+                    moveFactor = Time.deltaTime * terrainDragSpeed;
+                }
+                Vector3 newPos = new Vector3(0, 0, moveFactor);
                 draggedVertexCubeGenerator.AssignShiftValueAndDraggedVertex(draggedVertex, newPos);
                 draggedVertex = draggedVertex + newPos;
 
@@ -286,8 +295,20 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 								else if(interactionManager.IsLeftHandPrimary())
                                 {
                                     draggedObject = obj;
-                                    draggedObjectMaterial = draggedObject.GetComponent<Renderer>().material;
-                                    draggedObject.GetComponent<Renderer>().material = selectedObjectMaterial;
+
+                                    if (draggableVertices.Contains(draggedObject))
+                                    {
+                                        if (GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Terrain)
+                                        {
+                                            draggedVertex = FindVertexRelativePosition(draggedObject);
+                                            draggedVertexCubeGenerator = GetCubeGeneratorForDraggedVertex(draggedObject);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        draggedObjectMaterial = draggedObject.GetComponent<Renderer>().material;
+                                        draggedObject.GetComponent<Renderer>().material = selectedObjectMaterial;
+                                    }
                                 }
 								break;
                             }

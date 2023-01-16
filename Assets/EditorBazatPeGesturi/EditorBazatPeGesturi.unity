@@ -1700,7 +1700,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 1730401180}
-  moveFactor: 0.01
+  moveFactor: 0.1
   rotationSpeed: 20
 --- !u!1 &990034705
 GameObject:
@@ -2832,12 +2832,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cubeMesh: {fileID: 0}
   size: 5
-  resolution: 1
+  resolution: 3
   isSphere: 0
   isPlane: 1
   morphValue: 0
   shiftVertex: {x: 0, y: 0, z: 0}
-  draggedVertex: {x: -1, y: 5, z: 0}
+  draggedVertex: {x: 0, y: 0, z: 0}
   vertexObject: {fileID: 1242876260716138326, guid: 45a97a059d035f74ca14d7e3bef5f31b, type: 3}
 --- !u!33 &1415084588
 MeshFilter:
@@ -2866,7 +2866,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4c34c83af09b20140acb43025d6f427c, type: 2}
+  - {fileID: 2100000, guid: ec5a44b61af16c348a543b3a30b31bc8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
