@@ -60,10 +60,12 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
             if(isPlane)
             {
                 Mesh planeMesh = GeneratePlane(size, resolution);
-
                 cubeMesh.triangles = new int[0];
                 cubeMesh.vertices = planeMesh.vertices;
                 cubeMesh.triangles = planeMesh.triangles;
+
+                vertices = new List<Vector3>(planeMesh.vertices);
+                triangles = new List<int>(planeMesh.triangles);
 
                 AssignMesh(planeMesh);
 
@@ -295,11 +297,23 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         filterMesh.Clear();
         filterMesh.vertices = mesh.vertices;
         filterMesh.triangles = mesh.triangles;
+        filterMesh.RecalculateNormals();
+        
+        Vector2[] uv = new Vector2[(resolution + 1) * (resolution + 1)];
+        for (int i = 0, y = 0; y <= resolution; y++)
+        {
+            for (int x = 0; x <= resolution; x++, i++)
+            {
+                uv[i] = new Vector2((float) x / resolution, (float) y / resolution);
+            }
+        }
+        filterMesh.uv = uv;
     }
 
     void ModifyVertices()
     {
         vertices = ShiftVertex(vertices.ToArray(), shiftVertex, draggedVertex);
+
         cubeMesh.vertices = vertices.ToArray();
         cubeMesh.triangles = triangles.ToArray();
 
@@ -324,7 +338,7 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         {
             if(vertex == vertexToBeModified)
             {
-                Vector3 newPos = new Vector3(vertex.x + shiftValue.x, vertex.y + shiftValue.y, vertex.z);
+                Vector3 newPos = new Vector3(vertex.x + shiftValue.x, vertex.y + shiftValue.y, vertex.z + shiftValue.z);
                 shiftedVertices.Add(newPos);
             }
             else

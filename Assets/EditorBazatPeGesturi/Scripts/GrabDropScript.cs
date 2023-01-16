@@ -16,6 +16,9 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 	[Tooltip("Drag speed of the selected object.")]
 	public float dragSpeed = 3.0f;
 
+    [Tooltip("Drag speed of the selected vertex in Terrain Mode.")]
+    public float terrainDragSpeed = 3.0f;
+
     [Tooltip("Smooth factor used for object rotation.")]
     public float smoothFactor = 3.0f;
 
@@ -211,7 +214,7 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
             //move grabbed vertex as long as last hand event is Gripped
             if (GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Terrain && draggedVertexCubeGenerator != null)
             {
-                Vector3 newPos = new Vector3(0, Time.deltaTime * 2.0f, 0);
+                Vector3 newPos = new Vector3(0, 0, -Time.deltaTime * terrainDragSpeed);
                 draggedVertexCubeGenerator.AssignShiftValueAndDraggedVertex(draggedVertex, newPos);
                 draggedVertex = draggedVertex + newPos;
 

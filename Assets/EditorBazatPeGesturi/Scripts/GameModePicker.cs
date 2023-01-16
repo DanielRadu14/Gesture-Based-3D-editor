@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameModePicker : UnityEngine.MonoBehaviour
 {
     public enum GameMode { Default, Vertex, Terrain };
-    private GameMode gameModeStat = GameMode.Default;
+    public GameMode gameModeStat = GameMode.Default;
     
     [Tooltip("UI-Text used to display the picked game mode.")]
     public UnityEngine.UI.Text gameModeDebugText;
@@ -43,7 +43,6 @@ public class GameModePicker : UnityEngine.MonoBehaviour
         }
 
         planeObject = GameObject.Find("Plane");
-        //planeObject.SetActive(false);
     }
 
     private void Update()
@@ -109,8 +108,8 @@ public class GameModePicker : UnityEngine.MonoBehaviour
                 }
 
                 UpdateActiveGameObjects(false);
-                //planeObject.SetActive(true);
-
+                SetPlane setPlaneScript = planeObject.GetComponent<SetPlane>();
+                setPlaneScript.enabled = false;
                 break;
             default:
                 gameModeStat = GameMode.Default;
