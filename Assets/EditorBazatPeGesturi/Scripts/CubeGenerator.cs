@@ -403,7 +403,16 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         List<Vector3> shiftedVertices = new List<Vector3>();
         foreach (Vector3 vertex in vertices)
         {
-            shiftedVertices.Add(this.transform.position + vertex + shiftValue);
+            Vector3 shiftedPos;
+            if(GrabDropScript.Instance.rotatingObject)
+            {
+                shiftedPos = vertex + shiftValue;
+            }
+            else
+            {
+                shiftedPos = this.transform.position + vertex + shiftValue;
+            }
+            shiftedVertices.Add(shiftedPos);
         }
         return shiftedVertices;
     }

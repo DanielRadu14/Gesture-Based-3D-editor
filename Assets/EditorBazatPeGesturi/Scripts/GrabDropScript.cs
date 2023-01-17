@@ -81,6 +81,7 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
         new Dictionary<GameObject, Dictionary<GameObject, Vector3>>();
     private Vector3 draggedVertex = Vector3.zero;
     private CubeGenerator draggedVertexCubeGenerator = null;
+    public bool rotatingObject = false;
 
     private bool gameModeSelected = false;
 
@@ -437,8 +438,10 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
                         Material material = SelectTextureType.Instance.GetMaterial();
                         //rotate object only if a material was not selected
                         if (material == null)
+                        {
                             draggedObject.transform.rotation = Quaternion.Slerp(draggedObject.transform.rotation, qObjectRotation, smoothFactor * Time.deltaTime);
-
+                            rotatingObject = true;
+                        }
                         // check if the object (hand grip) was released
                         bool isReleased = lastHandEvent == InteractionManager.HandEventType.Release;
 
@@ -473,6 +476,7 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
                             else
                             {
                                 draggedObject.GetComponent<Renderer>().material = draggedObjectMaterial;
+                                rotatingObject = false;
                             }
                             
                             draggedObject = null;
