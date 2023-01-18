@@ -59,8 +59,8 @@ public class ModelPresentationScript : UnityEngine.MonoBehaviour
                 {
                     int resolutionFactor;
                     if (gestureListener.IsZoomingOut())
-                        resolutionFactor = 1;
-                    else resolutionFactor = -1;
+                        resolutionFactor = -1;
+                    else resolutionFactor = 1;
 
                     cubeGenerator.resolution += resolutionFactor;
                     canZoom = false;
