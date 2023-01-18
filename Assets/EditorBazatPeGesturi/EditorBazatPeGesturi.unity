@@ -1945,6 +1945,7 @@ MonoBehaviour:
   leftHandInteraction: 1
   rightHandInteraction: 1
   vertexObjectsCount: 0
+  rotatingObject: 0
 --- !u!114 &1080803224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2914,6 +2915,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4da96b311b006634699e2435ba52049d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  size: 1000
+  resolution: 10
 --- !u!54 &1415084592
 Rigidbody:
   m_ObjectHideFlags: 0

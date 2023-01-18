@@ -402,7 +402,10 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
                                     Vector3 newPos = new Vector3(x, y, z);
 
                                     CubeGenerator cubeGenerator = GetCubeGeneratorForDraggedVertex(draggedObject);
-                                    cubeGenerator.AssignShiftValueAndDraggedVertex(draggedVertex, newPos);
+                                    if(cubeGenerator)
+                                    {
+                                        cubeGenerator.AssignShiftValueAndDraggedVertex(draggedVertex, newPos);
+                                    }
                                 }
                                 //drop dragged object
                                 else

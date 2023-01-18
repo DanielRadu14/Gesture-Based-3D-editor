@@ -16,6 +16,7 @@ public class ModelPresentationScript : UnityEngine.MonoBehaviour
 	// model's initial rotation
 	private Quaternion initialRotation;
     private Vector3 initialScale;
+    private bool canZoom = true;
 
 
 	void Start() 
@@ -39,30 +40,34 @@ public class ModelPresentationScript : UnityEngine.MonoBehaviour
 	
 	void Update() 
 	{
-		// dont run Update() if there is no gesture listener
 		if(!gestureListener)
 			return;
 
 		if(gestureListener.IsZoomingIn() || gestureListener.IsZoomingOut())
 		{
-			// zoom the model
-			float zoomFactor = gestureListener.GetZoomFactor();
+            if (GameModePicker.Instance.gameModeStat == GameModePicker.GameMode.Default)
+            {
+                // zoom the model
+                float zoomFactor = gestureListener.GetZoomFactor();
+                Vector3 newLocalScale = new Vector3(zoomFactor, zoomFactor, zoomFactor);
+                transform.localScale = Vector3.Lerp(transform.localScale, newLocalScale, spinSpeed * Time.deltaTime);
+            }
+            else
+            {
+                CubeGenerator cubeGenerator = this.gameObject.GetComponent<CubeGenerator>();
+                if(cubeGenerator != null && canZoom)
+                {
+                    int resolutionFactor;
+                    if (gestureListener.IsZoomingOut())
+                        resolutionFactor = 1;
+                    else resolutionFactor = -1;
 
-			Vector3 newLocalScale = new Vector3(zoomFactor, zoomFactor, zoomFactor);
-			transform.localScale = Vector3.Lerp(transform.localScale, newLocalScale, spinSpeed * Time.deltaTime);
+                    cubeGenerator.resolution += resolutionFactor;
+                    canZoom = false;
+                    StartCoroutine(ResetCanZoom());
+                }
+            }
 		}
-
-		//if(gestureListener.IsTurningWheel())
-		//{
-			// rotate the model
-			//float turnAngle = Mathf.Clamp(gestureListener.GetWheelAngle(), -30f, 30f);
-			//float updateAngle = Mathf.Lerp(0, turnAngle, spinSpeed * Time.deltaTime);
-
-			//if(screenCamera)
-				//transform.RotateAround(transform.position, screenCamera.transform.TransformDirection(Vector3.up), updateAngle);
-			//else
-				//transform.Rotate(Vector3.up * turnAngle, Space.World);
-		//}
 
 		if(gestureListener.IsRaiseHand())
 		{
@@ -72,5 +77,11 @@ public class ModelPresentationScript : UnityEngine.MonoBehaviour
 		}
 
 	}
-	
+
+    private IEnumerator ResetCanZoom()
+    {
+        yield return new WaitForSeconds(2.0f);
+        canZoom = true;
+    }
+
 }
