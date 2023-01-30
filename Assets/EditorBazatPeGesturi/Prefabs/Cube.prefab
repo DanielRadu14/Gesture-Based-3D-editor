@@ -130,6 +130,7 @@ MonoBehaviour:
   size: 20
   resolution: 1
   isSphere: 0
+  isPlane: 0
   morphValue: 0
   shiftVertex: {x: -5, y: 0, z: 0}
   draggedVertex: {x: 0, y: 0, z: 0}

@@ -54,7 +54,6 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
         resolution = Mathf.Clamp(resolution, 1, 30);
 
         //only generate when changes occur
-        
         if (ValuesHaveChanged())
         {
             if(isPlane)
@@ -74,7 +73,7 @@ public class CubeGenerator : UnityEngine.MonoBehaviour
 
                 if (!boxColliderAttached)
                 {
-                    this.gameObject.AddComponent<BoxCollider>();
+                    this.gameObject.AddComponent<MeshCollider>();
                     boxColliderAttached = true;
                 }
             }

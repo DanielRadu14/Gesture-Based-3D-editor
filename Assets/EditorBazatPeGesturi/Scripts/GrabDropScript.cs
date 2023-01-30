@@ -82,6 +82,7 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
     private Vector3 draggedVertex = Vector3.zero;
     private CubeGenerator draggedVertexCubeGenerator = null;
     public bool rotatingObject = false;
+    private bool canInstantiateTree = true;
 
     private bool gameModeSelected = false;
 
@@ -253,6 +254,21 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
 					RaycastHit hit;
 					if(Physics.Raycast(ray, out hit))
 					{
+                        //tree mode
+                        if (GameModePicker.Instance.GetGameMode() == GameModePicker.GameMode.Tree && canInstantiateTree && hit.collider.gameObject == GameObject.Find("Plane"))
+                        {
+                            if (interactionManager.IsRightHandPrimary())
+                            {
+                                CreatableTreeTypes.Instance.CreateTree(hit.point);
+                                canInstantiateTree = false;
+                                StartCoroutine(ResetCanInstantiateTree());
+                            }
+                            else
+                            {
+                                CreatableTreeTypes.Instance.DeleteTrees(hit.point);
+                            }
+                        }
+
                         //all created objects in the scene, all vertices from the objects in the scene, all selectable objects (panels on the right of the screen)
                         foreach (GameObject obj in draggableObjects)
 						{
@@ -501,6 +517,12 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
     {
         yield return new WaitForSeconds(1.0f);
         gameModeSelected = false;
+    }
+
+    private IEnumerator ResetCanInstantiateTree()
+    {
+        yield return new WaitForSeconds(0.5f);
+        canInstantiateTree = true;
     }
 
     void OnGUI()

@@ -18,6 +18,9 @@ public class SelectableObjects : MonoBehaviour
     [Tooltip("List of the objects that may be dragged and dropped.")]
     public List<GameObject> selectableGameModeTypes;
 
+    [Tooltip("List of the objects that may be dragged and dropped.")]
+    public List<GameObject> creatableTreeTypes;
+
     protected static SelectableObjects instance = null;
     public static SelectableObjects Instance
     {

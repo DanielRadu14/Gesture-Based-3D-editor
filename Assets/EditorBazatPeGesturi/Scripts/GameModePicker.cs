@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameModePicker : UnityEngine.MonoBehaviour
 {
-    public enum GameMode { Default, Vertex, Terrain };
+    public enum GameMode { Default, Vertex, Terrain, Tree };
     public GameMode gameModeStat = GameMode.Default;
     
     [Tooltip("UI-Text used to display the picked game mode.")]
@@ -110,6 +110,18 @@ public class GameModePicker : UnityEngine.MonoBehaviour
                 UpdateActiveGameObjects(false);
                 SetPlane setPlaneScript = planeObject.GetComponent<SetPlane>();
                 setPlaneScript.enabled = false;
+                break;
+            case "Tree":
+                gameModeStat = GameMode.Tree;
+                foreach (GameObject gameObj in GrabDropScript.Instance.draggableObjects)
+                {
+                    if (gameObj.name.Contains("Vertex"))
+                    {
+                        gameObj.GetComponent<SphereCollider>().enabled = false;
+                    }
+                }
+                Destroy(planeObject.GetComponent<MeshCollider>());
+                planeObject.AddComponent<MeshCollider>();
                 break;
             default:
                 gameModeStat = GameMode.Default;
