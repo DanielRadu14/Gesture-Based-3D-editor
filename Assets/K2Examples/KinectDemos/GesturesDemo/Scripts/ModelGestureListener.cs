@@ -159,6 +159,16 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
         return yaw;
     }
 
+    public void SetPitch(float pitch)
+    {
+        this.pitch = pitch;
+    }
+
+    public void SetYaw(float yaw)
+    {
+        this.yaw = yaw;
+    }
+
     /// <summary>
     /// Invoked when a new user is detected. Here you can start gesture tracking by invoking KinectManager.DetectGesture()-function.
     /// </summary>
@@ -358,8 +368,8 @@ public class ModelGestureListener : UnityEngine.MonoBehaviour, KinectGestures.Ge
 
 		if(gesture == KinectGestures.Gestures.RaiseLeftHand)
 			raiseHand = true;
-		else if(gesture == KinectGestures.Gestures.RaiseRightHand)
-			raiseHand = true;
+		//else if(gesture == KinectGestures.Gestures.RaiseRightHand)
+			//raiseHand = true;
         else if (gesture == KinectGestures.Gestures.SwipeDown)
             swipeDown = true;
         else if (gesture == KinectGestures.Gestures.SwipeUp)

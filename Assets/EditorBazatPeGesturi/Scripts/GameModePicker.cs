@@ -4,17 +4,20 @@ using UnityEngine;
 
 public class GameModePicker : UnityEngine.MonoBehaviour
 {
-    public enum GameMode { Default, Vertex, Terrain, Tree };
-    public GameMode gameModeStat = GameMode.Default;
-    
     [Tooltip("UI-Text used to display the picked game mode.")]
     public UnityEngine.UI.Text gameModeDebugText;
 
+    public enum GameMode { Default, Vertex, Terrain, Tree };
+    public GameMode gameModeStat = GameMode.Default;
+
     private GameObject planeObject;
 
-    private List<GameObject> deactivatedGameObjects = new List<GameObject>();
-    private List<string> gameObjectsToDeactivateFromInterface = new List<string> { "Canvas/Parallelepiped", "Canvas/Sphere", "Canvas/Cube",
-                                                                                   "SelectableObjects/CreatableObject", "SelectableObjects/SelectableTextures"};
+    public Transform camera;
+    public float hidingOffset = 20.0f;
+    public float slideSpeed = 5.0f;
+    public float distanceFromCamera = 25;
+    private ModelGestureListener gestureListener;
+    private InteractionManager interactionManager;
 
     protected static GameModePicker instance = null;
     public static GameModePicker Instance
@@ -37,17 +40,54 @@ public class GameModePicker : UnityEngine.MonoBehaviour
             return;
         }
 
-        foreach(string gameObjectName in gameObjectsToDeactivateFromInterface)
-        {
-            deactivatedGameObjects.Add(GameObject.Find(gameObjectName));
-        }
-
         planeObject = GameObject.Find("Plane");
+    }
+
+    private void Start()
+    {
+        gestureListener = ModelGestureListener.Instance;
     }
 
     private void Update()
     {
-        gameModeDebugText.text = gameModeStat.ToString();
+        if (interactionManager == null)
+        {
+            interactionManager = GrabDropScript.Instance.interactionManager;
+        }
+
+        this.transform.rotation = Quaternion.Euler(gestureListener.GetPitch(), gestureListener.GetYaw(), 0f);
+
+        Vector3 topMiddleWorldPoint = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight, distanceFromCamera));
+        Vector3 topMiddleScreenPoint = Camera.main.WorldToScreenPoint(topMiddleWorldPoint);
+
+        if (!ShowMenu(topMiddleScreenPoint))
+        {
+            Vector3 moveFactor = camera.up.normalized * hidingOffset;
+            Vector3 hidingPosition = new Vector3(topMiddleWorldPoint.x + moveFactor.x, topMiddleWorldPoint.y + moveFactor.y, topMiddleWorldPoint.z + moveFactor.z);
+            this.transform.position = Vector3.Lerp(this.transform.position,
+                                        hidingPosition,
+                                        Mathf.Clamp01(Time.deltaTime * slideSpeed));
+        }
+        else
+        {
+            this.transform.position = Vector3.Lerp(this.transform.position,
+                                        topMiddleWorldPoint,
+                                        Mathf.Clamp01(Time.deltaTime * slideSpeed));
+        }
+    }
+
+    private bool ShowMenu(Vector3 pivotScreenPoint)
+    {
+        Vector3 leftBottomBorder = new Vector3(pivotScreenPoint.x - 512, pivotScreenPoint.y - 56, 0);
+        Vector3 rightTopBorder = new Vector3(pivotScreenPoint.x + 512, pivotScreenPoint.y, 0);
+
+        Vector3 cursorNormalPos = interactionManager.IsLeftHandPrimary() ? interactionManager.GetLeftHandScreenPos() : interactionManager.GetRightHandScreenPos();
+
+        Vector3 cursorPixelPos = Vector3.zero;
+        cursorPixelPos.x = (int)(cursorNormalPos.x * (Camera.main ? Camera.main.pixelWidth : Screen.width));
+        cursorPixelPos.y = (int)(cursorNormalPos.y * (Camera.main ? Camera.main.pixelHeight : Screen.height));
+
+        return cursorPixelPos.x > leftBottomBorder.x && cursorPixelPos.x < rightTopBorder.x && cursorPixelPos.y > leftBottomBorder.y;
     }
 
     public void SetGameMode(string gameMode)
@@ -120,6 +160,7 @@ public class GameModePicker : UnityEngine.MonoBehaviour
                         gameObj.GetComponent<SphereCollider>().enabled = false;
                     }
                 }
+                UpdateActiveGameObjects(false);
                 Destroy(planeObject.GetComponent<MeshCollider>());
                 planeObject.AddComponent<MeshCollider>();
                 break;
@@ -136,9 +177,7 @@ public class GameModePicker : UnityEngine.MonoBehaviour
 
     private void UpdateActiveGameObjects(bool active)
     {
-        foreach(GameObject gameObject in deactivatedGameObjects)
-        {
-            gameObject.SetActive(active);
-        }
+        CreateObjectType.Instance.SetMenuAvailability(active);
+        SelectTextureType.Instance.SetMenuAvailability(active);
     }
 }

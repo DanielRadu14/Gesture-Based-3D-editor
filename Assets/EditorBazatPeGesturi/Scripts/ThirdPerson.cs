@@ -23,24 +23,27 @@ public class ThirdPerson : MonoBehaviour
         if (Input.GetKey(KeyCode.Q))
         {
             pitch += Time.deltaTime * ThirdPersonTarget.Instance.rotationSpeed;
+            gestureListener.SetPitch(pitch);
         }
 
         if (Input.GetKey(KeyCode.E))
         {
             pitch -= Time.deltaTime * ThirdPersonTarget.Instance.rotationSpeed;
+            gestureListener.SetPitch(pitch);
         }
-        
 
         if (Input.GetKey(KeyCode.R))
         {
             yaw -= Time.deltaTime * ThirdPersonTarget.Instance.rotationSpeed;
+            gestureListener.SetYaw(yaw);
         }
 
         if (Input.GetKey(KeyCode.T))
         {
             yaw += Time.deltaTime * ThirdPersonTarget.Instance.rotationSpeed;
+            gestureListener.SetYaw(yaw);
         }
-
+        
         if (gestureListener.IsLeaningLeft() || gestureListener.IsLeaningRight())
         {
             yaw = gestureListener.GetYaw();

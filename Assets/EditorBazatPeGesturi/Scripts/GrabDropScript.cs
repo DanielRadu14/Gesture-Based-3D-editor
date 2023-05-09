@@ -44,7 +44,7 @@ public class GrabDropScript : UnityEngine.MonoBehaviour, InteractionListenerInte
     public UnityEngine.UI.Text debugText;
 
     [Tooltip("Interaction manager instance, used to detect hand interactions. If left empty, it will be the first interaction manager found in the scene.")]
-	private InteractionManager interactionManager;
+	public InteractionManager interactionManager;
 
     [Tooltip("Index of the player, tracked by the respective InteractionManager. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
     public int playerIndex = 0;
